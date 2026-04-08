@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Gyroscope Lightweight</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="remote">Remote</string>
+    <string name="clear_data">Clear Data</string>
+    <string name="clear_data_question">Clear data?</string>
+    <string name="export">Export</string>
+    <string name="switchToPhoneLayout">Switch to phone layout</string>
+    <string name="switchColumns1">1 column</string>
+    <string name="switchColumns2">2 columns</string>
+    <string name="switchColumns3">3 columns</string>
+    <string name="toggleBrightMode">Toggle bright mode</string>
+    <string name="fontSize">Font size</string>
+    <string name="sensorGyroscope">Gyroscope</string>
+    <string name="unknown">Unknown</string>
+</resources>
