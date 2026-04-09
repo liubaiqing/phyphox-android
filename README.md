@@ -1,106 +1,105 @@
-# Gyroscope
+# 陀螺仪 (Gyroscope)
 
-Gyroscope is a modified version of the phyphox app, specifically designed for CUPT (Chinese Undergraduate Physics Tournament) competition demonstrations. It uses the sensors in a smartphone to measure and visualize the phone's attitude in real-time.
+陀螺仪是phyphox应用的修改版本，专为中国大学生物理学术竞赛（CUPT）演示设计。它使用智能手机中的传感器实时测量和可视化手机的姿态。
 
-## Original Repository
+## 原属仓库
 
-This project is based on the phyphox-android repository, which is an open-source app that uses smartphone sensors for physics experiments. The original repository can be found at https://github.com/phyphox/phyphox-android.
+本项目基于phyphox-android仓库，这是一个使用智能手机传感器进行物理实验的开源应用。原属仓库可以在 https://github.com/phyphox/phyphox-android 找到。
 
-## Modifications
+## 修改内容
 
-1. **Simplified UI**: Removed unnecessary features and languages, only keeping Chinese language support
-2. **3D Rendering**: Added a 3D visualization of the phone's attitude using OpenGL ES
-3. **Multi-sensor Support**: Extended to support multiple sensors including accelerometer, linear acceleration, gravity, and rotation vector
-4. **Splash Screen**: Added a custom splash screen with project information
-5. **UI Improvements**: Adjusted UI colors to use only black and white tones
+1. **简化界面**：移除了不必要的功能和语言，只保留中文语言支持
+2. **3D渲染**：使用OpenGL ES添加了手机姿态的3D可视化
+3. **多传感器支持**：扩展支持多种传感器，包括加速度传感器、线性加速度传感器、重力传感器和旋转矢量传感器
+4. **启动界面**：添加了带有项目信息的自定义启动界面
+5. **界面改进**：调整了界面颜色，仅使用黑白色调
 
-## Features
+## 功能
 
-1. **Real-time 3D Attitude Visualization**: Displays a 3D model of the phone with coordinate axes (X: red, Y: green, Z: blue)
-2. **Multi-sensor Data Collection**: Collects data from multiple sensors with high sampling rate
-3. **Data Export**: Supports exporting sensor data in various formats (Excel, CSV)
-4. **Zoom Control**: Allows zooming in and out of the 3D model
-5. **Sensor Data Display**: Shows real-time sensor data in graphs and numerical format
+1. **实时3D姿态可视化**：显示手机的3D模型和坐标轴（X: 红色, Y: 绿色, Z: 蓝色）
+2. **多传感器数据采集**：以高采样率从多个传感器收集数据
+3. **数据导出**：支持以多种格式（Excel, CSV）导出传感器数据
+4. **缩放控制**：允许放大和缩小3D模型
+5. **传感器数据显示**：以图表和数字格式显示实时传感器数据
 
-## Usage
+## 使用方法
 
-1. Launch the app and tap "明白" (Understood) on the splash screen
-2. Select "多传感器姿态测量" (Multi-sensor Attitude Measurement) from the main menu
-3. Tap the play button in the top right corner to start data collection
-4. View the 3D model of the phone's attitude in real-time
-5. Use the zoom buttons to adjust the 3D model size
-6. Tap the stop button to stop data collection
-7. Use the export button to export the collected data
+1. 启动应用并在启动界面点击"明白"
+2. 从主菜单选择"多传感器姿态测量"
+3. 点击右上角的播放按钮开始数据采集
+4. 实时查看手机姿态的3D模型
+5. 使用缩放按钮调整3D模型大小
+6. 点击停止按钮停止数据采集
+7. 使用导出按钮导出收集的数据
 
-## Coding style
+## 代码风格
 
-The app and all of its parts are developed by students and researchers who do not necessarily have a software development background. Therefore, you will find many passages in our code that is not best practice. Any help in improving our code is welcome.
+该应用及其所有部分由学生和研究人员开发，他们不一定具有软件开发背景。因此，您会在我们的代码中发现许多不符合最佳实践的段落。任何改进我们代码的帮助都受到欢迎。
 
-## Structure
+## 项目结构
 
-This repository contains the source for the Android version of the app. The whole project is spread across several repositories:
+本仓库包含应用的Android版本源代码。整个项目分布在多个仓库中：
 
 * **phyphox-android**
-  Android source, includes phyphox-experiments and phyphox-webinterface as subrepositories
+  Android源代码，包含phyphox-experiments和phyphox-webinterface作为子仓库
 
 * **phyphox-experiments**
-  Phyphox experiment definitions, which are provided with the app
+  Phyphox实验定义，随应用一起提供
 
 * **phyphox-ios**
-  iOS source, includes phyphox-experiments and phyphox-webinterface as subrepositories
+  iOS源代码，包含phyphox-experiments和phyphox-webinterface作为子仓库
 
 * **phyphox-translation**
-  This contains the translations from experiment definitions and app store entries. It is synchronized manually to the experiments repository through a python script. Its main purpose is to conveniently provide translatable resources to our translation system.
+  包含实验定义和应用商店条目的翻译。通过Python脚本手动同步到实验仓库。其主要目的是为我们的翻译系统方便地提供可翻译资源。
 
 * **phyphox-webeditor**
-  The web-based editor to create and modify phyphox experiment-files in a GUI
+  基于Web的编辑器，用于在GUI中创建和修改phyphox实验文件
 
 * **phyphox-webinterface**
-  This is the webinterface served by the webserver in the app when the "remote access" feature is activated
+  这是当"远程访问"功能激活时，应用中的Web服务器提供的Web界面
   
-The overarching documentation (for example of the phyphox file format or the REST API) can be found in our [Wiki on phyphox.org](https://phyphox.org/wiki).
+总体文档（例如phyphox文件格式或REST API）可以在我们的[phyphox.org Wiki](https://phyphox.org/wiki)中找到。
 
-## Branches
+## 分支
 
-We keep the code of the most recent published version in "master", while minor development is done in "development". Larger changes and long-term development occurs in additional branches, which at some point converge in a "dev-next" branch. In some repositories you will also find a "translation" branch, which usually is identical or very close to the current "development" or "dev-next" branch and linked to our translation system to control when our translators are able to work on new text passages.
+我们将最新发布版本的代码保存在"master"分支中，而小的开发工作在"development"分支中进行。更大的更改和长期开发在其他分支中进行，这些分支最终会合并到"dev-next"分支中。在一些仓库中，您还会发现"translation"分支，它通常与当前的"development"或"dev-next"分支相同或非常接近，并链接到我们的翻译系统，以控制翻译人员何时能够处理新的文本段落。
 
-## Contributing
+## 贡献
 
-We encourage any contribution to our project. However, due to the complexity of the project and the fact that it is used in schools around the world, there are some things to consider before any code makes it into the final version of phyphox that is distributed in the app stores:
-* Be careful about changes of the UI. Many teachers rely on a simple and consistent workflow without too much distraction for their students. Also, they might have created some worksheets, which need updates when the interface changes. Therefore, try to add new features in a simple and lean way.
-* Android and iOS versions should remain as similar as possible. We do accept slight variations of the UI of both versions if they follow the obvious design standards of each platform (for example using checkmarks on Android but buttons telling the action on iOS, or a FAB on Android and a Actionbar entry on iOS) and one version might get features that are impossible on the other platform (for example reading the light sensor on Android, which cannot be done on iOS or getting the number of satellites for GPS on Android). But if you provide a new feature that can be implemented on the other platform as well, we will not include it in the final app until we (or you or somebody) has ported it to the other platform as well. Once again, this app is used in classes around the world and we want to provide a very similar experience on both platforms, so the teachers don't have to explain the usage of phyphox twice.
-* Translation is not done via git directly. If you want to translate the app, contact us, so we can set up an account for you on our translation system.
-In any case, if you plan on contributing more than a little bugfix or optimization, it is probably a good idea to contact us first, so we can plan together and consider your plans in our development as well.
+我们鼓励对我们的项目做出任何贡献。然而，由于项目的复杂性以及它在世界各地学校中的使用，在任何代码进入最终版本的phyphox（在应用商店中分发）之前，有一些事情需要考虑：
+* 注意UI的变化。许多教师依赖简单一致的工作流程，不给学生太多干扰。此外，他们可能已经创建了一些工作表，当界面变化时需要更新。因此，尝试以简单而精益的方式添加新功能。
+* Android和iOS版本应保持尽可能相似。我们接受两个版本UI的轻微变化，如果它们遵循每个平台的明显设计标准（例如在Android上使用复选标记，但在iOS上使用告诉操作的按钮，或在Android上使用FAB和在iOS上使用ActionBar条目），并且一个版本可能获得在另一个平台上不可能的功能（例如在Android上读取光传感器，这在iOS上无法完成，或在Android上获取GPS的卫星数量）。但是，如果您提供的新功能也可以在另一个平台上实现，我们不会将其包含在最终应用中，直到我们（或您或其他人）也将其移植到另一个平台。再次强调，这个应用在世界各地的课堂中使用，我们希望在两个平台上提供非常相似的体验，这样教师就不必两次解释phyphox的使用方法。
+* 翻译不是通过git直接完成的。如果您想翻译应用，请联系我们，以便我们为您在我们的翻译系统上设置一个账户。
+无论如何，如果您计划贡献的不仅仅是一个小的bug修复或优化，最好先联系我们，这样我们可以一起计划并在我们的开发中考虑您的计划。
 
-## Used libraries
+## 使用的库
 
 ### FFTW
 
-This part of phyphox uses the fftw to calculate Fourier transformations (http://www.fftw.org). FFTW is distributed under the GNU General Public Licence (v2 or newer, so we use v3 to be compatible to the phyphox licence). FFTW is Copyright © 2003, 2007-11 Matteo Frigo, Copyright © 2003, 2007-11 Massachusetts Institute of Technology.
+phyphox的这部分使用fftw来计算傅里叶变换（http://www.fftw.org）。FFTW在GNU通用公共许可证（v2或更新版本，因此我们使用v3以与phyphox许可证兼容）下分发。FFTW的版权归2003, 2007-11 Matteo Frigo和2003, 2007-11麻省理工学院所有。
 
 ### jlhttp
 
-This part of phyphox uses the jlhttp library ([freeutils.net/source/jlhttp](https://www.freeutils.net/source/jlhttp/)) to create the webserver for the remote access feature. It is released under the GNU General Public Licence. Big thanks to [Amichai R.](https://github.com/amichair) for this library and for migrating phyphox to it.
+phyphox的这部分使用jlhttp库（[freeutils.net/source/jlhttp](https://www.freeutils.net/source/jlhttp/)）来创建远程访问功能的Web服务器。它在GNU通用公共许可证下发布。非常感谢[Amichai R.](https://github.com/amichair)提供这个库并将phyphox迁移到它。
 
 ### ZXing
 
-This part of phyphox uses the ZXing (Zebra Crossing) library to read QR codes (https://github.com/zxing/zxing). It is licenced under the Apache Licence v2 with the following notices:
+phyphox的这部分使用ZXing（Zebra Crossing）库来读取QR码（https://github.com/zxing/zxing）。它在Apache许可证v2下获得许可，带有以下声明：
 
-**NOTICES FOR BARCODE4J**
+**BARCODE4J声明**
 
 Barcode4J
-Copyright 2002-2010 Jeremias Märki
-Copyright 2005-2006 Dietmar Bürkle
+版权归2002-2010 Jeremias Märki所有
+版权归2005-2006 Dietmar Bürkle所有
 
-Portions of this software were contributed under section 5 of the
-Apache License. Contributors are listed under:
+本软件的部分内容是根据Apache许可证第5节贡献的。贡献者列在：
 http://barcode4j.sourceforge.net/contributors.html
 
-**NOTICES FOR JCOMMANDER**
+**JCOMMANDER声明**
 
-Copyright 2010 Cedric Beust cedric@beust.com
+版权归2010 Cedric Beust cedric@beust.com所有
 
 ### Eclipse Paho MQTT
 
-The Android version's MQTT communication uses the MQTT Android Service by Hannes Achleitner (https://github.com/hannesa2/paho.mqtt.android, Apache Licence 2.0), which in turn uses the Eclipse Paho MQTT library (https://www.eclipse.org/paho, Eclipse Distribution Licence 1.0), please see the respective webpages for details on the licence and contributors.
+Android版本的MQTT通信使用Hannes Achleitner的MQTT Android Service（https://github.com/hannesa2/paho.mqtt.android，Apache许可证2.0），该服务又使用Eclipse Paho MQTT库（https://www.eclipse.org/paho，Eclipse分发许可证1.0），请参阅各自的网页以获取有关许可证和贡献者的详细信息。
 
