@@ -1,19 +1,36 @@
-# phyphox: Android
+# Gyroscope
 
-Phyphox is an app that uses the sensors in a smartphone for physics experiments. You can find additional details and examples on https://phyphox.org.
+Gyroscope is a modified version of the phyphox app, specifically designed for CUPT (Chinese Undergraduate Physics Tournament) competition demonstrations. It uses the sensors in a smartphone to measure and visualize the phone's attitude in real-time.
 
-Copyright 2016 Dr. Sebastian Staacks, 2nd Institute of Physics, RWTH Aachen University.
+## Original Repository
 
-This project has been created at the RWTH Aachen University and is released under the GNU General Public Licence (see licence file) since version 1.1.0.
+This project is based on the phyphox-android repository, which is an open-source app that uses smartphone sensors for physics experiments. The original repository can be found at https://github.com/phyphox/phyphox-android.
 
-**The names "phyphox" and "RWTH Aachen University" as well as the RWTH Aachen logo are registered trademarks.**
+## Modifications
 
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
-     alt="Get it on F-Droid"
-     height="80">](https://f-droid.org/packages/de.rwth_aachen.phyphox/)
-[<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png"
-     alt="Get it on Google Play"
-     height="80">](https://play.google.com/store/apps/details?id=de.rwth_aachen.phyphox)
+1. **Simplified UI**: Removed unnecessary features and languages, only keeping Chinese language support
+2. **3D Rendering**: Added a 3D visualization of the phone's attitude using OpenGL ES
+3. **Multi-sensor Support**: Extended to support multiple sensors including accelerometer, linear acceleration, gravity, and rotation vector
+4. **Splash Screen**: Added a custom splash screen with project information
+5. **UI Improvements**: Adjusted UI colors to use only black and white tones
+
+## Features
+
+1. **Real-time 3D Attitude Visualization**: Displays a 3D model of the phone with coordinate axes (X: red, Y: green, Z: blue)
+2. **Multi-sensor Data Collection**: Collects data from multiple sensors with high sampling rate
+3. **Data Export**: Supports exporting sensor data in various formats (Excel, CSV)
+4. **Zoom Control**: Allows zooming in and out of the 3D model
+5. **Sensor Data Display**: Shows real-time sensor data in graphs and numerical format
+
+## Usage
+
+1. Launch the app and tap "明白" (Understood) on the splash screen
+2. Select "多传感器姿态测量" (Multi-sensor Attitude Measurement) from the main menu
+3. Tap the play button in the top right corner to start data collection
+4. View the 3D model of the phone's attitude in real-time
+5. Use the zoom buttons to adjust the 3D model size
+6. Tap the stop button to stop data collection
+7. Use the export button to export the collected data
 
 ## Coding style
 
