@@ -1,40 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="phyphox_primary">#FF000000</color> <!-- Pure black -->
+    <color name="phyphox_primary_weak">#FF4D4D4D</color> <!-- Dark gray -->
+    <color name="phyphox_rwth_primary">#FF000000</color> <!-- Pure black -->
 
-    <color name="phyphox_primary">#ffff7e22</color>
-    <color name="phyphox_primary_weak">#ffffa500</color>
-    <color name="phyphox_rwth_primary">#ff00549f</color>
+    <color name="phyphox_white_100">#FFFFFFFF</color> <!-- Pure white -->
+    <color name="phyphox_white_90">#FFFAFAFA</color> <!-- Near-white -->
+    <color name="phyphox_white_80">#FFF5F5F5</color> <!-- Light gray-white -->
+    <color name="phyphox_white_70">#FFE8E8E8</color> <!-- Light gray -->
+    <color name="phyphox_white_60">#FFD9D9D9</color> <!-- Medium light gray -->
+    <color name="phyphox_white_50_black_50">#FF808080</color> <!-- Medium gray -->
+    <color name="phyphox_black_40">#FF666666</color> <!-- Medium gray -->
+    <color name="phyphox_black_50">#FF4D4D4D</color> <!-- Dark medium gray -->
+    <color name="phyphox_black_60">#FF333333</color> <!-- Dark gray -->
+    <color name="phyphox_black_80">#FF1A1A1A</color> <!-- Very dark gray -->
+    <color name="phyphox_black_100">#FF000000</color> <!-- Pure black -->
 
-    <color name="phyphox_white_100">#ffffffff</color>
-    <color name="phyphox_white_90">#fff0f0f0</color>
-    <color name="phyphox_white_80">#ffe0e0e0</color>
-    <color name="phyphox_white_70">#ffd0d0d0</color>
-    <color name="phyphox_white_60">#ffc4c4c4</color>
-    <color name="phyphox_white_50_black_50">#ff808080</color>
-    <color name="phyphox_black_40">#ff404040</color>
-    <color name="phyphox_black_50">#ff303030</color>
-    <color name="phyphox_black_60">#ff202020</color>
-    <color name="phyphox_black_80">#ff101010</color>
-    <color name="phyphox_black_100">#ff000000</color>
+    <color name="phyphox_blue_100">#FF333333</color> <!-- Dark gray -->
+    <color name="phyphox_blue_60">#FF666666</color> <!-- Medium gray -->
+    <color name="phyphox_blue_40">#FF999999</color> <!-- Light gray -->
+    <color name="phyphox_blue_strong">#FF000000</color> <!-- Pure black -->
 
-    <color name="phyphox_blue_100">#ff2260a5</color>
-    <color name="phyphox_blue_60">#ff39a2ff</color>
-    <color name="phyphox_blue_40">#ff9dd1ff</color>
-    <color name="phyphox_blue_strong">#ff0169c5</color>
+    <color name="phyphox_red">#FF666666</color> <!-- Gray replacing red -->
+    <color name="phyphox_red_weak">#FFB3B3B3</color> <!-- Light gray -->
 
-    <color name="phyphox_red">#fffe005d</color>
-    <color name="phyphox_red_weak">#ffff7cac</color>
+    <color name="phyphox_magenta">#FF000000</color> <!-- Pure black -->
+    <color name="phyphox_magenta_weak">#FF4D4D4D</color> <!-- Dark gray -->
 
-    <color name="phyphox_magenta">#ffeb46f4</color>
-    <color name="phyphox_magenta_weak">#fff6aafa</color>
+    <color name="phyphox_green">#FF000000</color> <!-- Pure black -->
+    <color name="phyphox_green_weak">#FF4D4D4D</color> <!-- Dark gray -->
+    <color name="phyphox_green_strong">#FF000000</color> <!-- Pure black -->
 
-    <color name="phyphox_green">#ff2bfb4c</color>
-    <color name="phyphox_green_weak">#ffa1fdaf</color>
-    <color name="phyphox_green_strong">#ff00d425</color>
+    <color name="phyphox_yellow_weak">#FFE8E8E8</color> <!-- Light gray -->
+    <color name="phyphox_yellow">#FFD9D9D9</color> <!-- Medium light gray -->
+    <color name="phyphox_yellow_strong">#FFBFBFBF</color> <!-- Light gray -->
 
-    <color name="phyphox_yellow_weak">#ffe7e09b</color>
-    <color name="phyphox_yellow">#ffedf668</color>
-    <color name="phyphox_yellow_strong">#ff8d9709</color>
-
+    <color name="md_surface">#FFFFFFFF</color> <!-- Pure white -->
+    <color name="md_on_surface">#FF000000</color> <!-- Pure black -->
+    <color name="md_primary_container">#FFF5F5F5</color> <!-- Light gray-white -->
+    <color name="md_on_primary_container">#FF000000</color> <!-- Pure black -->
+    <color name="md_secondary">#FF666666</color> <!-- Medium gray -->
+    <color name="md_secondary_container">#FFE8E8E8</color> <!-- Light gray -->
+    <color name="md_outline">#FFBFBFBF</color> <!-- Light gray -->
+    
+    <!-- Black and white enhanced colors for better contrast -->
+    <color name="button_background">#FF212121</color> <!-- Very dark gray (almost black) -->
+    <color name="button_text_color">#FFFFFFFF</color> <!-- Pure white -->
+    <color name="button_pressed_color">#FF000000</color> <!-- Pure black when pressed -->
+    <color name="accent_color">#FF424242</color> <!-- Medium-dark gray -->
+    <color name="highlight_color">#FFEEEEEE</color> <!-- Very light gray for highlights -->
+    <color name="contrast_border_color">#FFCCCCCC</color> <!-- Light gray border -->
 
 </resources>

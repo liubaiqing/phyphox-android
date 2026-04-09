@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">手机物理工坊</string>
+    <string name="app_name">Gyroscope</string>
     <string name="action_settings">设置</string>
     <string name="title_activity_experiment">手机物理工坊</string>
     <string name="newExperiment">新建实验</string>

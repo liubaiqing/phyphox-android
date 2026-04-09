@@ -5,7 +5,7 @@ import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
-import android.media.MediaRecorder;
+
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -39,6 +39,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.io.File;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -47,12 +48,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import de.rwth_aachen.phyphox.Bluetooth.Bluetooth;
-import de.rwth_aachen.phyphox.Bluetooth.BluetoothInput;
-import de.rwth_aachen.phyphox.Bluetooth.BluetoothOutput;
-import de.rwth_aachen.phyphox.camera.CameraInput;
-import de.rwth_aachen.phyphox.camera.depth.DepthInput;
-import de.rwth_aachen.phyphox.NetworkConnection.NetworkConnection;
+// Simplified: removed Bluetooth, Camera, NetworkConnection imports
 
 //This class holds all the information that makes up an experiment
 //There are also some functions that the experiment should perform
@@ -79,11 +75,7 @@ public class PhyphoxExperiment implements Serializable, ExperimentTimeReference.
     public Vector<ExpView> experimentViews = new Vector<>(); //Instances of the experiment views (see expView.java) that define the views for this experiment
     public ExperimentTimeReference experimentTimeReference; //This class holds the time of the first sensor event as a reference to adjust the sensor time stamp for all sensors to start at a common zero
     public Vector<SensorInput> inputSensors = new Vector<>(); //Instances of sensorInputs (see sensorInput.java) which are used in this experiment
-    public DepthInput depthInput = null;
-    public CameraInput cameraInput = null;
-    public GpsInput gpsIn = null;
-    public Vector<BluetoothInput> bluetoothInputs = new Vector<>(); //Instances of bluetoothInputs (see sensorInput.java) which are used in this experiment
-    public Vector<BluetoothOutput> bluetoothOutputs = new Vector<>(); //Instances of bluetoothOutputs (see sensorInput.java) which are used in this experiment
+    // Simplified: removed depthInput, cameraInput, gpsIn, bluetoothInputs, bluetoothOutputs
     public final Vector<DataBuffer> dataBuffers = new Vector<>(); //Instances of dataBuffers (see dataBuffer.java) that are used to store sensor data, analysis results etc.
     public final Map<String, Integer> dataMap = new HashMap<>(); //This maps key names (string) defined in the experiment-file to the index of a dataBuffer
     public Vector<Analysis.AnalysisModule> analysis = new Vector<>(); //Instances of analysisModules (see analysis.java) that define all the mathematical processes in this experiment
@@ -108,21 +100,7 @@ public class PhyphoxExperiment implements Serializable, ExperimentTimeReference.
     double timedRunStartDelay = 3.; //Start delay for timed runs
     double timedRunStopDelay = 10.; //Stop delay for timed runs
 
-    //Audio output is handled in its own class, which will be instantiated by the file parser if required
-    public AudioOutput audioOutput = null;
-
-    //Parameters for audio record
-    transient AudioRecord audioRecord = null; //Instance of AudioRecord. Not used if null.
-    String micOutput; //The key name of the buffer which receives the data from audio recording.
-    String micRateOutput; //The key name of the buffer which receives the sample rate of audio recording.
-    int micRate = 48000; //The recording rate in Hz
-    int micBufferSize = 0; //The size of the recording buffer
-    int minBufferSize = 0; //The minimum buffer size requested by the device
-    boolean appendAudioInput = false; //Append audio input on start of analysis cycle instead of replacing old data
-    boolean forceAudioRecordingCompatibilityFormat = false; //Some Xiaomi device do not properly work with ENCODING_PCM_FLOAT if the Google Assistent voice trigger is enabled. This forces the use of the good old 16bit int format
-
-    //Network connections
-    List<NetworkConnection> networkConnections = new ArrayList<>();
+    // Simplified: removed audioOutput, audioRecord, networkConnections
 
     public DataExport exporter; //An instance of the DataExport class for exporting functionality (see DataExport.java)
 
@@ -168,6 +146,8 @@ public class PhyphoxExperiment implements Serializable, ExperimentTimeReference.
         exporter.export(c, false);
     }
 
+
+
     //This function gets called in the main loop and takes care of any inputElements in the current experiment view
     public void handleInputViews(boolean measuring) {
         if (!loaded)
@@ -198,65 +178,7 @@ public class PhyphoxExperiment implements Serializable, ExperimentTimeReference.
         if (!loaded)
             return;
 
-        //Send and receive network data if used
-        for (NetworkConnection networkConnection : networkConnections) {
-            dataLock.lock();
-            try {
-                networkConnection.pushDataToBuffers();
-            } finally {
-                dataLock.unlock();
-            }
-        }
-
-        //Get the data from the audio recording if used
-        if (audioRecord != null) {
-            boolean sampleRateWritten = false;
-            DataBuffer sampleRateBuffer = null;
-            if (!micRateOutput.isEmpty())
-                sampleRateBuffer = getBuffer(micRateOutput);
-
-            if (measuring) {
-                DataBuffer recording = getBuffer(micOutput);
-                final int readBufferSize = Math.max(Math.min(recording.size, 4800), minBufferSize); //The dataBuffer for the recording
-                float[] buffer = new float[readBufferSize]; //The temporary buffer to read to
-                short[] oldBuffer = new short[readBufferSize]; //Used for <23 compatibility
-                int bytesRead = 0;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !forceAudioRecordingCompatibilityFormat)
-                    bytesRead = audioRecord.read(buffer, 0, readBufferSize, AudioRecord.READ_NON_BLOCKING);
-                else
-                    bytesRead = audioRecord.read(oldBuffer, 0, readBufferSize);
-                if (lastAnalysis != 0) { //The first recording data does not make sense, but we had to read it to clear the recording buffer...
-                    dataLock.lock();
-                    try {
-                        if (recordingUsed) {
-                            if (!appendAudioInput)
-                                recording.clear(false); //We only want fresh data
-                            if (sampleRateBuffer != null)
-                                sampleRateBuffer.append(audioRecord.getSampleRate());
-                            sampleRateWritten = true;
-                            recordingUsed = false;
-                        }
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !forceAudioRecordingCompatibilityFormat)
-                            recording.append(buffer, bytesRead);
-                        else
-                            recording.append(oldBuffer, bytesRead);
-
-                    } finally {
-                        dataLock.unlock();
-                    }
-                }
-            }
-            if (!sampleRateWritten) {
-                //Even if we do not use the first recording, we write the audio rate so it is available early.
-                dataLock.lock();
-                try {
-                    if (sampleRateBuffer != null)
-                        sampleRateBuffer.append(audioRecord.getSampleRate());
-                } finally {
-                    dataLock.unlock();
-                }
-            }
-        }
+        // Simplified: removed network and audio recording data handling
 
         Double sleep = analysisSleep;
         if (analysisDynamicSleep != null && !Double.isNaN(analysisDynamicSleep.value) && !Double.isInfinite(analysisDynamicSleep.value)) {
@@ -309,35 +231,9 @@ public class PhyphoxExperiment implements Serializable, ExperimentTimeReference.
         }
         cycle++;
 
-        //Play audio
-        if (measuring && audioOutput != null) {
-            audioOutput.play();
-        }
+        // Simplified: removed audio playback, bluetooth, network data handling
 
-        if (measuring && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            //Send the results to the bluetooth outputs (if used)
-            for (BluetoothOutput btOut : bluetoothOutputs) {
-                dataLock.lock();
-                try {
-                    btOut.sendData();
-                } finally {
-                    dataLock.unlock();
-                }
-            }
-        }
-
-        //Send and receive network data if used
-        for (NetworkConnection networkConnection : networkConnections) {
-            dataLock.lock();
-            try {
-                networkConnection.doExecute();
-                networkConnection.pushDataToBuffers();
-            } finally {
-                dataLock.unlock();
-            }
-        }
-
-        recordingUsed = true;
+        // recordingUsed = true; // Removed with audio recording
         newData = true; //We have fresh data to present.
         lastAnalysis = experimentTimeReference.getExperimentTime(); //Remember when we were done this time
     }
@@ -390,106 +286,30 @@ public class PhyphoxExperiment implements Serializable, ExperimentTimeReference.
         event = experimentTimeReference.timeMappings.size() > 0 ? experimentTimeReference.timeMappings.get(experimentTimeReference.timeMappings.size() - 1) : null;
         lastAnalysis = 0.0;
 
-        //Recording
-        if (audioRecord != null && audioRecord.getState() == AudioRecord.STATE_INITIALIZED)
-            audioRecord.stop();
-        //Playback
-        if (audioOutput != null) {
-            audioOutput.stop();
-        }
+        // Simplified: removed audio recording, playback, gps, depth, camera, network, bluetooth
+
         //Sensors
         for (SensorInput sensor : inputSensors)
             sensor.stop();
-
-        if (gpsIn != null)
-            gpsIn.stop();
-
-        if (depthInput != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            depthInput.stop();
-
-        if (cameraInput != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            cameraInput.stop();
-
-        for (NetworkConnection networkConnection : networkConnections)
-            networkConnection.stop();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            //Bluetooth
-            Map<String, Bluetooth> uniqueBluetoothDevices = new HashMap<>();
-            for (BluetoothInput bti : bluetoothInputs) {
-                bti.stop();
-                uniqueBluetoothDevices.put(bti.idString != null && !bti.idString.isEmpty() ? bti.idString : bti.deviceAddress, bti);
-            }
-            for (BluetoothOutput bto : bluetoothOutputs) {
-                bto.stop();
-                uniqueBluetoothDevices.put(bto.idString != null && !bto.idString.isEmpty() ? bto.idString : bto.deviceAddress, bto);
-            }
-            for (Bluetooth b : uniqueBluetoothDevices.values()) {
-                b.writeEventCharacteristic(event);
-            }
-        }
 
     }
 
 
     //Helper to start all I/O of this experiment (i.e. when it should be started)
-    public void startAllIO() throws Bluetooth.BluetoothException, DepthInput.DepthInputException {
+    public void startAllIO() {
 
         if (!loaded)
             return;
 
         experimentTimeReference.registerEvent(ExperimentTimeReference.TimeMappingEvent.START);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            ExperimentTimeReference.TimeMapping event = experimentTimeReference.timeMappings.get(experimentTimeReference.timeMappings.size() - 1);
-            Map<String, Bluetooth> uniqueBluetoothDevices = new HashMap<>();
-            for (BluetoothInput bti : bluetoothInputs) {
-                uniqueBluetoothDevices.put(bti.idString != null && !bti.idString.isEmpty() ? bti.idString : bti.deviceAddress, bti);
-            }
-            for (BluetoothOutput bto : bluetoothOutputs) {
-                uniqueBluetoothDevices.put(bto.idString != null && !bto.idString.isEmpty() ? bto.idString : bto.deviceAddress, bto);
-            }
-            for (Bluetooth b : uniqueBluetoothDevices.values()) {
-                b.writeEventCharacteristic(event);
-            }
-        }
 
         newUserInput = true; //Set this to true to execute analysis at least ones with default values.
 
         for (SensorInput sensor : inputSensors)
             sensor.start();
 
-        if (gpsIn != null)
-            gpsIn.start();
+        // Simplified: removed gps, depth, camera, audio, bluetooth, network
 
-        if (depthInput != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            depthInput.start();
-
-        if (cameraInput != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            cameraInput.start();
-
-
-        //Playback
-        if (audioOutput != null) {
-            audioOutput.start(false);
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            for (BluetoothInput bti : bluetoothInputs) {
-                bti.start();
-            }
-            for (BluetoothOutput btO : bluetoothOutputs) {
-                btO.start();
-            }
-        }
-
-        for (NetworkConnection networkConnection : networkConnections)
-            networkConnection.start();
-
-        //Audio Recording
-        if (audioRecord != null && audioRecord.getState() == AudioRecord.STATE_INITIALIZED)
-            audioRecord.startRecording();
-
-        //We will not start audio output here as it will be triggered by the analysis modules.
     }
 
     public void init(SensorManager sensorManager, LocationManager locationManager) throws Exception {
@@ -498,26 +318,14 @@ public class PhyphoxExperiment implements Serializable, ExperimentTimeReference.
             updateViews(i, true);
         }
 
-        //Initialize audio output
-        if (audioOutput != null)
-            audioOutput.init();
-
-        //Create audioTrack instance
-        if (micBufferSize > 0) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !forceAudioRecordingCompatibilityFormat)
-                audioRecord = new AudioRecord(MediaRecorder.AudioSource.DEFAULT, micRate, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_FLOAT, micBufferSize * 2);
-            else
-                audioRecord = new AudioRecord(MediaRecorder.AudioSource.DEFAULT, micRate, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, micBufferSize * 2);
-        }
+        // Simplified: removed audio output init and audio record creation
 
         //Reconnect sensors
         for (SensorInput si : inputSensors) {
             si.attachSensorManager(sensorManager);
         }
 
-        if (gpsIn != null) {
-            gpsIn.attachLocationManager(locationManager);
-        }
+        // Simplified: removed gps init
 
     }
 

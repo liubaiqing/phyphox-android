@@ -6,7 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Typeface;
-import android.hardware.camera2.CameraManager;
+// Simplified: removed CameraManager import
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -24,7 +24,7 @@ import de.rwth_aachen.phyphox.ExperimentList.datasource.ExperimentRepository;
 import de.rwth_aachen.phyphox.ExperimentList.model.ExperimentShortInfo;
 import de.rwth_aachen.phyphox.Helper.RGB;
 import de.rwth_aachen.phyphox.R;
-import de.rwth_aachen.phyphox.camera.helper.CameraHelper;
+// Simplified: removed camera imports
 
 //The category class wraps all experiment entries and their views of a category, including the
 //grid view and the category headline
@@ -178,11 +178,7 @@ public class ExperimentsInCategory {
     }
 
     public void getParentScrollViewPosition() {
-        //We want to show current availability of experiments requiring cameras
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            CameraManager cm = (CameraManager) parentContext.getSystemService(Context.CAMERA_SERVICE);
-            CameraHelper.updateCameraList(cm);
-        }
+        // Simplified: camera availability check removed
 
         //Save scroll position to restore this later
         ScrollView sv = parentActivity.findViewById(R.id.experimentScroller);

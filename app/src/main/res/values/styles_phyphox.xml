@@ -2,19 +2,15 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- For now, splash screen shows only in dark theme-->
-    <style name="splashTheme" parent="@android:style/Theme.DeviceDefault.NoActionBar">
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowSplashScreenBrandingImage">@drawable/rwth_white</item>
-    </style>
 
-    <style name="Theme.Phyphox.Dialog.Alert.Light" parent="ThemeOverlay.Material3.Dialog.Alert">
+
+    <style name="Theme.Phyphox.Dialog.Alert.Light" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
         <item name="textColorAlertDialogListItem">@color/phyphox_black_100</item>
         <item name="colorAccent">@color/phyphox_primary</item>
         <item name="android:colorBackground">@color/phyphox_white_100</item>
     </style>
 
-    <style name="Theme.Phyphox.Dialog.Alert.Dark" parent="ThemeOverlay.Material3.Dialog.Alert">
+    <style name="Theme.Phyphox.Dialog.Alert.Dark" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
         <item name="textColorAlertDialogListItem">@color/phyphox_white_100</item>
         <item name="colorAccent">@color/phyphox_primary</item>
         <item name="android:colorBackground">@color/phyphox_black_60</item>
@@ -32,10 +28,6 @@
         <item name="android:textSize">@dimen/graph_tools_font</item>
     </style>
 
-    <style name="BottomNavigationView.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
-        <item name="android:color">@color/phyphox_primary</item>
-    </style>
-
     <style name="PreferenceThemeOverlay.v14.Phyphox.Dark" parent="PreferenceThemeOverlay.v14">
         <item name="android:tint">@color/phyphox_white_100</item>
     </style>
@@ -50,21 +42,14 @@
 
     </style>
 
-    <style name="BottomSheetDialog.Light" parent="Widget.Material3.BottomSheet.Modal">
+    <style name="BottomSheetDialog.Light" parent="Widget.MaterialComponents.BottomSheet.Modal">
         <item name="backgroundTint">@color/phyphox_white_100</item>
         <item name="android:textColor">@color/phyphox_black_60</item>
-        <item name="shapeAppearance">@style/ShapeAppearance.App.LargeComponent</item>
     </style>
 
-    <style name="BottomSheetDialog.Dark" parent="Widget.Material3.BottomSheet">
+    <style name="BottomSheetDialog.Dark" parent="Widget.MaterialComponents.BottomSheet">
         <item name="backgroundTint">@color/phyphox_black_40</item>
         <item name="android:textColor">@color/phyphox_white_100</item>
-        <item name="shapeAppearance">@style/ShapeAppearance.App.LargeComponent</item>
     </style>
-
-    <style name="ShapeAppearance.App.LargeComponent" parent="ShapeAppearance.Material3.LargeComponent">
-        <item name="cornerSize">24dp</item>
-    </style>
-
 
 </resources>

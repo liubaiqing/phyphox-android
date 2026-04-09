@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
+// Filament is available on Maven Central
+
 android {
 
     defaultConfig {
@@ -9,13 +11,13 @@ android {
         targetSdkVersion 35
         compileSdk 35
 
-        versionName "1.2.0"
+        versionName "1.0.0"
         //  format  WXXYYZZ, where WW is major, XX is minor, YY is patch, and ZZ is build
-        versionCode 1020009 //1.02.00-09
+        versionCode 1000000 //1.02.00-09
 
-        def locales = ['en', 'cs', 'de', 'el', 'es', 'fr', 'hi', 'it', 'ja', 'ka', 'nl', 'pl', 'pt', 'ru', 'sr', 'b+sr+Latn', 'tr', 'vi', 'zh-rCN', 'zh-rTW']
+        def locales = ['en', 'zh-rCN']
         buildConfigField "String[]", "LOCALE_ARRAY", "new String[]{\""+locales.join("\",\"")+"\"}"
-        resourceConfigurations += ['en', 'cs', 'de', 'el', 'es', 'fr', 'hi', 'it', 'ja', 'ka', 'nl', 'pl', 'pt', 'ru', 'sr', 'b+sr+Latn', 'tr', 'vi', 'zh-rCN', 'zh-rTW']
+        resourceConfigurations += ['en', 'zh-rCN']
 
         vectorDrawables {
             useSupportLibrary = true
@@ -28,6 +30,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            debuggable true
+            jniDebuggable true
+            renderscriptDebuggable true
+            minifyEnabled false
+        }
         release {
             lintOptions {
                 disable 'MissingTranslation'
@@ -47,7 +55,7 @@ android {
     productFlavors {
         screenshot {
             dimension "permissions"
-            minSdkVersion 18
+            minSdkVersion 21
         }
         regular {
             dimension "permissions"
@@ -74,6 +82,8 @@ android {
     }
 
     ndkVersion '28.0.13004108'
+    compileSdk 35
+    buildToolsVersion '36.0.0'
 }
 
 dependencies {
@@ -125,5 +135,10 @@ dependencies {
     implementation "androidx.camera:camera-view:${camerax_version}"
 
     implementation 'androidx.recyclerview:recyclerview:1.4.0'
+
+    // Filament 3D rendering engine
+    implementation 'com.google.android.filament:filament-android:1.70.2'
+    implementation 'com.google.android.filament:filament-utils-android:1.70.2'
+    implementation 'com.google.android.filament:gltfio-android:1.70.2'
 
 }

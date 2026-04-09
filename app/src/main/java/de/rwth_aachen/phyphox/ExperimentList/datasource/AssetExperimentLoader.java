@@ -7,7 +7,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.hardware.SensorManager;
-import android.hardware.camera2.CameraManager;
+// Simplified: removed CameraManager import
 import android.os.Build;
 import android.util.Log;
 import android.util.Xml;
@@ -35,17 +35,14 @@ import de.rwth_aachen.phyphox.ExperimentList.model.ExperimentLoadInfoData;
 import de.rwth_aachen.phyphox.ExperimentList.model.ExperimentShortInfo;
 import de.rwth_aachen.phyphox.Helper.baseColorDrawable.BaseColorDrawable;
 import de.rwth_aachen.phyphox.Helper.baseColorDrawable.BitmapIcon;
-import de.rwth_aachen.phyphox.Bluetooth.Bluetooth;
+// Simplified: removed Bluetooth, GpsInput, camera imports
 import de.rwth_aachen.phyphox.ExperimentList.ui.ExperimentsInCategory;
-import de.rwth_aachen.phyphox.GpsInput;
 import de.rwth_aachen.phyphox.Helper.Helper;
 import de.rwth_aachen.phyphox.Helper.RGB;
 import de.rwth_aachen.phyphox.R;
 import de.rwth_aachen.phyphox.SensorInput;
 import de.rwth_aachen.phyphox.Helper.baseColorDrawable.TextIcon;
 import de.rwth_aachen.phyphox.Helper.baseColorDrawable.VectorIcon;
-import de.rwth_aachen.phyphox.camera.depth.DepthInput;
-import de.rwth_aachen.phyphox.camera.helper.CameraHelper;
 
 public class AssetExperimentLoader {
     ExperimentListEnvironment environment;
@@ -115,11 +112,7 @@ public class AssetExperimentLoader {
     }
 
     public void showCurrentCameraAvailability() {
-        //We want to show current availability of experiments requiring cameras
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            CameraManager cm = (CameraManager) environment.context.getSystemService(Context.CAMERA_SERVICE);
-            CameraHelper.updateCameraList(cm);
-        }
+        // Simplified: camera availability check removed
     }
 
     /**
@@ -308,61 +301,31 @@ public class AssetExperimentLoader {
                                     testSensor = new SensorInput(type, nameFilter, typeFilter, ignoreUnavailable, 0, SensorInput.SensorRateStrategy.auto, 0, false, null, null, null);
                                     testSensor.attachSensorManager(sensorManager);
                                 } catch (SensorInput.SensorException e) {
-                                    shortInfo.unavailableSensor = SensorInput.getDescriptionRes(SensorInput.resolveSensorString(type));
+                                    try {
+                                        shortInfo.unavailableSensor = SensorInput.getDescriptionRes(SensorInput.resolveSensorString(type));
+                                    } catch (Exception ex) {
+                                        shortInfo.unavailableSensor = R.string.unknown;
+                                    }
+                                    break;
+                                } catch (Exception e) {
+                                    // Handle any other exception (like unknown sensor types)
+                                    shortInfo.unavailableSensor = R.string.unknown;
                                     break;
                                 }
                                 if (!(testSensor.isAvailable() || testSensor.ignoreUnavailable)) {
-                                    shortInfo.unavailableSensor = SensorInput.getDescriptionRes(SensorInput.resolveSensorString(type));
+                                    try {
+                                        shortInfo.unavailableSensor = SensorInput.getDescriptionRes(SensorInput.resolveSensorString(type));
+                                    } catch (Exception e) {
+                                        shortInfo.unavailableSensor = R.string.unknown;
+                                    }
                                 }
                                 break;
                             case "location":
-                                if (!inInput || shortInfo.unavailableSensor >= 0)
-                                    break;
-                                if (!GpsInput.isAvailable(environment.context)) {
-                                    shortInfo.unavailableSensor = R.string.location;
-                                }
-                                break;
                             case "depth":
-                                if (!inInput || shortInfo.unavailableSensor >= 0)
-                                    break;
-                                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || !DepthInput.isAvailable()) {
-                                    shortInfo.unavailableSensor = R.string.sensorDepth;
-                                }
-                                break;
                             case "camera":
-                                PackageManager pm = environment.context.getPackageManager();
-                                if (!inInput || shortInfo.unavailableSensor >= 0)
-                                    break;
-                                if (!pm.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY))
-                                    shortInfo.unavailableSensor = R.string.sensorCamera;
-                                break;
                             case "bluetooth":
-                                if ((!inInput && !inOutput) || shortInfo.unavailableSensor >= 0) {
-                                    break;
-                                }
-                                String name = xpp.getAttributeValue(null, "name");
-                                String uuidStr = xpp.getAttributeValue(null, "uuid");
-                                UUID uuid = null;
-                                try {
-                                    uuid = UUID.fromString(uuidStr);
-                                } catch (Exception ignored) {
-
-                                }
-
-
-                                if (name != null && !name.isEmpty()) {
-                                    shortInfo.bluetoothDeviceNames.add(name);
-                                }
-                                if (uuid != null) {
-                                   shortInfo.bluetoothDeviceUUIDs.add(uuid);
-                                }
-                                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                                    shortInfo.unavailableSensor = R.string.bluetooth;
-                                } else if (!Bluetooth.isSupported(environment.context)) {
-                                    shortInfo.unavailableSensor = R.string.bluetooth;
-                                }
-                                if (!customColor)
-                                    shortInfo.color = new RGB(environment.resources.getColor(R.color.phyphox_blue_100));
+                                // Simplified: these input types are not supported
+                                shortInfo.unavailableSensor = R.string.unknown;
                                 break;
                         }
                         break;
@@ -497,25 +460,10 @@ public class AssetExperimentLoader {
     }
 
     /**
-     * Load hidden bluetooth experiments - these are not shown but will be offered if a matching Bluetooth device is found during a scan
+     * Load hidden bluetooth experiments - Simplified: not supported
      */
     protected void loadAndAddExperimentsFromHiddenBluetoothAssets() {
-        try {
-            final String[] experimentXMLs = environment.assetManager.list("experiments/bluetooth");
-            for (String experimentXML : experimentXMLs) {
-                //Load details for each experiment
-                InputStream input = environment.assetManager.open("experiments/bluetooth/" + experimentXML);
-                ExperimentLoadInfoData data = new ExperimentLoadInfoData(input, "bluetooth/" + experimentXML, null, true);
-                ExperimentShortInfo shortInfo = loadExperimentShortInfo(data, environment);
-                if (shortInfo != null) {
-                    addExperiment(shortInfo);
-                }
-            }
-        } catch (IOException e) {
-            Toast.makeText(environment.context, "Error: Could not load internal experiment list.", Toast.LENGTH_LONG).show();
-        }
-
-
+        // Simplified: bluetooth experiments not supported
     }
 
 }

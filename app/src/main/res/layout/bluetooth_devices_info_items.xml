@@ -15,7 +15,7 @@
     android:paddingTop="4dp"
     android:paddingEnd="8dp"
     android:paddingRight="8dp"
-    android:theme="@style/Widget.Phyphox.DayNight"
+    android:theme="@style/Theme.Phyphox"
     android:paddingBottom="4dp">
 
     <TextView

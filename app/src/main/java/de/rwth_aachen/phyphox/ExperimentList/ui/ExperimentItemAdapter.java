@@ -227,7 +227,7 @@ public class ExperimentItemAdapter extends BaseAdapter {
             holder.menuBtn.setVisibility(ImageView.VISIBLE);
             holder.menuBtn.setColorFilter(RGB.fromRGB(255, 255, 255).autoLightColor(res).intColor(), android.graphics.PorterDuff.Mode.SRC_IN);
             holder.menuBtn.setOnClickListener(v -> {
-                android.widget.PopupMenu popup = new android.widget.PopupMenu(new ContextThemeWrapper(parentActivity, R.style.Theme_Phyphox_DayNight), v);
+                android.widget.PopupMenu popup = new android.widget.PopupMenu(new ContextThemeWrapper(parentActivity, R.style.Theme_Phyphox), v);
                 popup.getMenuInflater().inflate(R.menu.experiment_item_context, popup.getMenu());
 
                 popup.getMenu().findItem(R.id.experiment_item_rename).setVisible(isSavedState);

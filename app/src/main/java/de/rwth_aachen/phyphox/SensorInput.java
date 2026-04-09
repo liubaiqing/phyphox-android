@@ -52,7 +52,7 @@ public class SensorInput implements SensorEventListener, Serializable {
     public Sensor sensor;
 
     public enum SensorName {
-        accelerometer, linear_acceleration, gravity, gyroscope, magnetic_field, pressure, light, proximity, temperature, humidity, attitude, custom
+        gyroscope, accelerometer, linear_acceleration, gravity, rotation_vector, custom
     }
 
     public enum SensorRateStrategy {
@@ -68,17 +68,11 @@ public class SensorInput implements SensorEventListener, Serializable {
     public static int resolveSensorName(SensorName type) {
         //Interpret the type string
         switch (type) {
+            case gyroscope: return Sensor.TYPE_GYROSCOPE;
             case accelerometer: return Sensor.TYPE_ACCELEROMETER;
             case linear_acceleration: return Sensor.TYPE_LINEAR_ACCELERATION;
             case gravity: return Sensor.TYPE_GRAVITY;
-            case gyroscope: return Sensor.TYPE_GYROSCOPE;
-            case magnetic_field: return Sensor.TYPE_MAGNETIC_FIELD;
-            case pressure: return Sensor.TYPE_PRESSURE;
-            case light: return Sensor.TYPE_LIGHT;
-            case proximity: return Sensor.TYPE_PROXIMITY;
-            case temperature: return Sensor.TYPE_AMBIENT_TEMPERATURE;
-            case humidity: return Sensor.TYPE_RELATIVE_HUMIDITY;
-            case attitude: return Sensor.TYPE_ROTATION_VECTOR;
+            case rotation_vector: return Sensor.TYPE_ROTATION_VECTOR;
             case custom: return -1;
             default: return -2;
         }
@@ -87,7 +81,7 @@ public class SensorInput implements SensorEventListener, Serializable {
     public static int resolveSensorString(String type) {
         try {
             return resolveSensorName(SensorName.valueOf(type));
-        } catch (InvalidParameterException e) {
+        } catch (IllegalArgumentException e) {
             return -2;
         }
     }
@@ -148,10 +142,17 @@ public class SensorInput implements SensorEventListener, Serializable {
         if (this.type < -1)
             throw new SensorException("Unknown sensor.");
 
-        this.sensorName = SensorName.valueOf(type);
+        try {
+            this.sensorName = SensorName.valueOf(type);
+        } catch (IllegalArgumentException e) {
+            this.sensorName = SensorName.custom;
+        }
     }
 
     private Sensor findSensor() {
+        // Simplified: add null check for sensorManager
+        if (sensorManager == null)
+            return null;
 
         Sensor sensor = null;
         vendorSensor = false;
@@ -162,41 +163,15 @@ public class SensorInput implements SensorEventListener, Serializable {
 
         if (sensor != null) {
             return sensor;
-        } else {
+        } else if (type == -1) {
             for (Sensor s : sensorManager.getSensorList(Sensor.TYPE_ALL)) {
                 String name = s.getName().toLowerCase();
-                if (type == Sensor.TYPE_AMBIENT_TEMPERATURE) {
-                    if (s.getType() < Sensor.TYPE_DEVICE_PRIVATE_BASE)
-                        continue;
-                    if (name.toLowerCase().contains("temperature") || name.toLowerCase().contains("thermo")) { //Samsung devices have an entry "thermistor", but we do not get any data by naively reading it, so do not add it unless there are other devices that benefit from accepting this name.
-                        sensor = s;
-                        vendorSensor = true;
-                        break;
-                    }
-                } else if (type == Sensor.TYPE_RELATIVE_HUMIDITY) {
-                    if (s.getType() < Sensor.TYPE_DEVICE_PRIVATE_BASE)
-                        continue;
-                    if (name.toLowerCase().contains("humidity")) {
-                        sensor = s;
-                        vendorSensor = true;
-                        break;
-                    }
-                } else if (type == Sensor.TYPE_PRESSURE) {
-                    if (s.getType() < Sensor.TYPE_DEVICE_PRIVATE_BASE)
-                        continue;
-                    if (name.toLowerCase().contains("pressure")) {
-                        sensor = s;
-                        vendorSensor = true;
-                        break;
-                    }
-                } else if (type == -1) {
-                    if (sensorTypeFilter >= 0 && s.getType() != sensorTypeFilter)
-                        continue;
-                    if (sensorNameFilter != null && !name.toLowerCase().contains(sensorNameFilter.toLowerCase()))
-                        continue;
-                    sensor = s;
-                    break;
-                }
+                if (sensorTypeFilter >= 0 && s.getType() != sensorTypeFilter)
+                    continue;
+                if (sensorNameFilter != null && !name.toLowerCase().contains(sensorNameFilter.toLowerCase()))
+                    continue;
+                sensor = s;
+                break;
             }
         }
 
@@ -216,30 +191,16 @@ public class SensorInput implements SensorEventListener, Serializable {
     //Get the internationalization string for a sensor type
     public static int getDescriptionRes(int type) {
         switch (type) {
+            case Sensor.TYPE_GYROSCOPE:
+                return R.string.sensorGyroscope;
             case Sensor.TYPE_ACCELEROMETER:
                 return R.string.sensorAccelerometer;
             case Sensor.TYPE_LINEAR_ACCELERATION:
                 return R.string.sensorLinearAcceleration;
             case Sensor.TYPE_GRAVITY:
                 return R.string.sensorGravity;
-            case Sensor.TYPE_GYROSCOPE:
-                return R.string.sensorGyroscope;
-            case Sensor.TYPE_MAGNETIC_FIELD:
-                return R.string.sensorMagneticField;
-            case Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED:
-                return R.string.sensorMagneticField;
-            case Sensor.TYPE_PRESSURE:
-                return R.string.sensorPressure;
-            case Sensor.TYPE_LIGHT:
-                return R.string.sensorLight;
-            case Sensor.TYPE_PROXIMITY:
-                return R.string.sensorProximity;
-            case Sensor.TYPE_AMBIENT_TEMPERATURE:
-                return R.string.sensorTemperature;
-            case Sensor.TYPE_RELATIVE_HUMIDITY:
-                return R.string.sensorHumidity;
             case Sensor.TYPE_ROTATION_VECTOR:
-                return R.string.sensorAttitude;
+                return R.string.sensorRotationVector;
         }
         if (type >= Sensor.TYPE_DEVICE_PRIVATE_BASE) {
             return R.string.sensorVendor;
@@ -253,39 +214,22 @@ public class SensorInput implements SensorEventListener, Serializable {
 
     public static String getUnit(int type) {
         switch (type) {
-            case Sensor.TYPE_LINEAR_ACCELERATION:
-                return "m/s²";
-            case Sensor.TYPE_LIGHT:
-                return "lx";
             case Sensor.TYPE_GYROSCOPE:
                 return "rad/s";
             case Sensor.TYPE_ACCELEROMETER:
                 return "m/s²";
-            case Sensor.TYPE_MAGNETIC_FIELD:
-                return "µT";
-            case Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED:
-                return "µT";
-            case Sensor.TYPE_PRESSURE:
-                return "hPa";
-            case Sensor.TYPE_AMBIENT_TEMPERATURE:
-                return "°C";
-            case Sensor.TYPE_RELATIVE_HUMIDITY:
-                return "%";
-            case Sensor.TYPE_PROXIMITY:
-                return "cm";
+            case Sensor.TYPE_LINEAR_ACCELERATION:
+                return "m/s²";
+            case Sensor.TYPE_GRAVITY:
+                return "m/s²";
+            case Sensor.TYPE_ROTATION_VECTOR:
+                return "";
         }
         return "";
     }
 
     //Start the data acquisition by registering a listener for this sensor.
     public void start() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2 && (type == Sensor.TYPE_MAGNETIC_FIELD || type == Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED)) {
-            if (calibrated)
-                this.type = Sensor.TYPE_MAGNETIC_FIELD;
-            else
-                this.type = Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED;
-        }
-
         sensor = findSensor();
 
         if (sensor == null)
@@ -301,10 +245,8 @@ public class SensorInput implements SensorEventListener, Serializable {
         this.strideCount = 0;
         lastOneTooFast = false;
 
-        if (rateStrategy == SensorRateStrategy.request || rateStrategy == SensorRateStrategy.auto)
-            this.sensorManager.registerListener(this, sensor, (int)(period / 1000));
-        else
-            this.sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
+        // Always use fastest sensor delay for maximum data collection
+        this.sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     //Stop the data acquisition by unregistering the listener for this sensor
@@ -363,10 +305,7 @@ public class SensorInput implements SensorEventListener, Serializable {
                 dataT.append(t);
             }
             if (dataAbs != null)
-                if (type == Sensor.TYPE_ROTATION_VECTOR)
-                    dataAbs.append(Math.sqrt(aquisitions*aquisitions-avgX*avgX-avgY*avgY-avgZ*avgZ) / aquisitions);
-                else
-                    dataAbs.append(Math.sqrt(avgX*avgX+avgY*avgY+avgZ*avgZ) / aquisitions);
+                dataAbs.append(Math.sqrt(avgX*avgX+avgY*avgY+avgZ*avgZ) / aquisitions);
             if (dataAccuracy != null)
                 dataAccuracy.append(accuracy);
         } finally {
@@ -405,21 +344,6 @@ public class SensorInput implements SensorEventListener, Serializable {
         if (event.sensor.getType() == sensor.getType()) {
 
             Double accuracy = Double.NaN;
-            if (type == Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED) {
-                accuracy = 0.0;
-            } else if (type == Sensor.TYPE_MAGNETIC_FIELD) {
-                switch (event.accuracy) {
-                    case SensorManager.SENSOR_STATUS_NO_CONTACT:
-                    case SensorManager.SENSOR_STATUS_UNRELIABLE:
-                        accuracy = -1.0;
-                    case SensorManager.SENSOR_STATUS_ACCURACY_LOW:
-                        accuracy = 1.0;
-                    case SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM:
-                        accuracy = 2.0;
-                    case SensorManager.SENSOR_STATUS_ACCURACY_HIGH:
-                        accuracy = 3.0;
-                }
-            }
 
             if (rateStrategy == SensorRateStrategy.generate) {
                 if (lastReading == 0) { //First value

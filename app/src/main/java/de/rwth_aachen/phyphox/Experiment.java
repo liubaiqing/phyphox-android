@@ -1,6 +1,6 @@
 package de.rwth_aachen.phyphox;
 
-import static de.rwth_aachen.phyphox.ExperimentList.model.Const.EXPERIMENT_PRESELECTED_BLUETOOTH_ADDRESS;
+
 import static de.rwth_aachen.phyphox.ExperimentList.model.Const.PREFS_NAME;
 import static de.rwth_aachen.phyphox.Helper.DataExportUtility.MIME_TYPE_CSV_ZIP;
 import static de.rwth_aachen.phyphox.Helper.DataExportUtility.MIME_TYPE_PHYPHOX;
@@ -19,10 +19,10 @@ import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
-import android.hardware.Sensor;
 import android.hardware.SensorManager;
-import android.location.LocationManager;
+
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -57,13 +57,14 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
+
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
 import androidx.core.app.ShareCompat;
@@ -74,9 +75,12 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.core.widget.TextViewCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+
 import androidx.viewpager.widget.ViewPager;
+
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.tabs.TabLayout;
@@ -91,32 +95,23 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
-import de.rwth_aachen.phyphox.Bluetooth.Bluetooth;
-import de.rwth_aachen.phyphox.Bluetooth.BluetoothInput;
-import de.rwth_aachen.phyphox.Bluetooth.BluetoothOutput;
-import de.rwth_aachen.phyphox.Bluetooth.ConnectedBluetoothDeviceInfoAdapter;
-import de.rwth_aachen.phyphox.Bluetooth.ConnectedDeviceInfo;
-import de.rwth_aachen.phyphox.Bluetooth.UpdateConnectedDeviceDelegate;
+
 import de.rwth_aachen.phyphox.Helper.DataExportUtility;
 import de.rwth_aachen.phyphox.Helper.WindowInsetHelper;
-import de.rwth_aachen.phyphox.camera.depth.DepthInput;
+
 import de.rwth_aachen.phyphox.Helper.DecimalTextWatcher;
 import de.rwth_aachen.phyphox.Helper.Helper;
-import de.rwth_aachen.phyphox.NetworkConnection.NetworkConnection;
+
 
 // Experiments are performed in this activity, which reacts to various intents.
 // The intent has to provide a *.phyphox file which defines the experiment
-public class Experiment extends AppCompatActivity implements View.OnClickListener,
-        NetworkConnection.ScanDialogDismissedDelegate,
-        NetworkConnection.NetworkConnectionDataPolicyInfoDelegate, UpdateConnectedDeviceDelegate{
+public class Experiment extends AppCompatActivity implements View.OnClickListener {
 
     //String constants to identify values saved in onSaveInstanceState
     private static final String STATE_CURRENT_VIEW = "current_view"; //Which experiment view is selected?
@@ -126,16 +121,11 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
     private static final String STATE_TIMED_RUN = "timed_run"; //Are timed runs activated?
     private static final String STATE_TIMED_RUN_START_DELAY = "timed_run_start_delay"; //The start delay for a timed run
     private static final String STATE_TIMED_RUN_STOP_DELAY = "timed_run_stop_delay"; //The stop delay for a timed run
-    private static final String STATE_TIMED_RUN_BEEP_COUNTDOWN = "timed_run_beep_countdown";
-    private static final String STATE_TIMED_RUN_BEEP_START = "timed_run_beep_start";
-    private static final String STATE_TIMED_RUN_BEEP_RUNNING = "timed_run_beep_running";
-    private static final String STATE_TIMED_RUN_BEEP_STOP = "timed_run_beep_stop";
+
     private static final String STATE_MENU_HINT_DISMISSED = "menu_hint_dismissed";
     private static final String STATE_START_HINT_DISMISSED = "start_hint_dismissed";
     private static final String STATE_SAVE_LOCALLY_DISMISSED = "save_locally_dismissed";
-    private static final String STATE_BLUETOOTH_SCAN_DISMISSED = "bluetooth_scan_dismissed";
-    private static final String STATE_NETWORK_SCAN_DISMISSED = "network_scan_dismissed";
-    private static final String STATE_DATA_POLICY_DISMISSED = "data_policy_dismissed";
+
     private static final String STATE_SENSOR_WARNING_DISMISSED = "sensor_warning_dismissed";
 
     //This handler creates the "main loop" as it is repeatedly called using postDelayed
@@ -150,10 +140,15 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
     boolean menuHintDismissed = false; //Remember that the user has clicked away the hint to the menu
     boolean startHintDismissed = false; //Remember that the user has clicked away the hint to the start button
     boolean saveLocallyDismissed = false; //Remember that the user did not want to save this experiment locally
-    boolean bluetoothScanDismissed = false;
-    boolean networkScanDismissed = false;
-    boolean dataPolicyDismissed = false;
+
     boolean sensorWarningDismissed = false;
+
+    //3D View
+    private Sensor rotationVectorSensor;
+    private SensorEventListener rotationVectorListener;
+    private float[] rotationMatrix = new float[16];
+
+
 
     //Remote server
     private RemoteServer remote = null; //The remote server (see remoteServer class)
@@ -168,10 +163,7 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
     boolean timedRun = false; //Timed run enabled?
     double timedRunStartDelay = 3.; //Start delay for timed runs
     double timedRunStopDelay = 10.; //Stop delay for timed runs
-    boolean timedRunBeepCountdown = false;
-    boolean timedRunBeepStart = false;
-    boolean timedRunBeepRunning = false;
-    boolean timedRunBeepStop = false;
+
     CountDownTimer cdTimer = null; //This holds the timer used for timed runs. If it is not null, a timed run is running and at the end of the countdown the measurement state will change
     long millisUntilFinished = 0; //This variable is used to cache the remaining countdown, so it is available outside the onTick-callback of the timer
 
@@ -194,14 +186,6 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
     PowerManager.WakeLock wakeLock = null;
 
     PopupWindow popupWindow = null;
-    AudioOutput audioOutput = null;
-
-    public static boolean bluetoothConnectionSuccessful = false;
-    ConnectedBluetoothDeviceInfoAdapter deviceInfoAdapter;
-    ArrayList<ConnectedDeviceInfo> connectedDevices = new ArrayList<>();
-
-    public static UpdateConnectedDeviceDelegate updateConnectedDeviceDelegate;
-    private  RecyclerView recyclerView;
 
 
     private void doLeaveExperiment() {
@@ -255,8 +239,6 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
             }
         });
 
-        updateConnectedDeviceDelegate = this;
-
         intent = getIntent(); //Store the intent for easy access
         res = getResources(); //The same for resources
         sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE); //The sensor manager will probably be needed...
@@ -297,6 +279,27 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
         WindowInsetHelper.setInsets(findViewById(R.id.errorMessage), WindowInsetHelper.ApplyTo.PADDING, WindowInsetHelper.ApplyTo.IGNORE, WindowInsetHelper.ApplyTo.PADDING, WindowInsetHelper.ApplyTo.IGNORE);
         WindowInsetHelper.setInsets(findViewById(R.id.recycler_view_battery), WindowInsetHelper.ApplyTo.PADDING, WindowInsetHelper.ApplyTo.IGNORE, WindowInsetHelper.ApplyTo.PADDING, WindowInsetHelper.ApplyTo.PADDING);
 
+        // FilamentView is now created in filamentElement, no need to initialize here
+
+        // Initialize rotation vector sensor
+        rotationVectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+        rotationVectorListener = new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent event) {
+                // Convert rotation vector to rotation matrix
+                SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
+                // Rotation matrix is now used by filamentElement, no need to update FilamentView here
+            }
+
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int accuracy) {
+                // Do nothing
+            }
+        };
+
+        // Register sensor listener with a reasonable delay for smoother rendering
+        sensorManager.registerListener(rotationVectorListener, rotationVectorSensor, SensorManager.SENSOR_DELAY_GAME);
+
     }
 
     private void shutdownIO() {
@@ -306,21 +309,13 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
 
         stopMeasurement(); //Stop the measurement
 
-        if (experiment != null && experiment.loaded) {
-            for (NetworkConnection networkConnection : experiment.networkConnections) {
-                networkConnection.disconnect();
-                networkConnection.specificAddress = null;
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                //Close all bluetooth connections, when the activity is recreated, they will be reestablished while initializing the experiment
-                for (BluetoothInput bti : experiment.bluetoothInputs)
-                    bti.closeConnection();
-                for (BluetoothOutput bti : experiment.bluetoothOutputs)
-                    bti.closeConnection();
-            }
-            if (experiment.depthInput != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                experiment.depthInput.stopCameras();
+        // Unregister sensor listener
+        if (rotationVectorListener != null && rotationVectorSensor != null) {
+            sensorManager.unregisterListener(rotationVectorListener);
         }
+
+        // FilamentView resources are now managed by filamentElement, no need to release here
+
     }
 
     @Override
@@ -352,14 +347,6 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
         super.onRestart();
 
         shutdown = false; //Deactivate shutdown variable
-
-        if (experiment != null && experiment.depthInput != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            try {
-                experiment.depthInput.startCameras();
-            } catch (Exception e) {
-                Toast.makeText(this, "DepthPreview: setCamera could not restart depthInput: " + e.getMessage(), Toast.LENGTH_LONG).show(); //Present message
-            }
-        }
 
         updateViewsHandler.postDelayed(updateViews, 40); //Start the "main loop" again
         startRemoteServer();  //Restart the remote server (if it is activated)
@@ -415,19 +402,6 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
         if (experiment == null || !experiment.loaded)
             return;
 
-        //Privacy policy
-        if (!dataPolicyDismissed && experiment.networkConnections.size() > 0) {
-            Set<String> sensors = new HashSet<>();
-            for (int i = 0; i < experiment.inputSensors.size(); i++) {
-                sensors.add(res.getString(experiment.inputSensors.get(i).getDescriptionRes()));
-            }
-            if (experiment.depthInput != null) {
-                sensors.add(res.getString(R.string.sensorDepth));
-            }
-            experiment.networkConnections.get(0).getDataAndPolicyDialog(experiment.audioRecord != null, experiment.gpsIn != null, experiment.inputSensors.size() > 0, sensors, this, this).show();
-            return;
-        }
-
         //Warning about vendor sensors
         if (!sensorWarningDismissed) {
             for (SensorInput sensor : experiment.inputSensors) {
@@ -467,20 +441,6 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
                     });
             AlertDialog dialog = builder.create();
             dialog.show();
-            return;
-        }
-
-        //Network scan dialog
-        if (!networkScanDismissed) {
-            networkScanDismissed = true;
-            connectNetworkConnections();
-            return;
-        }
-
-        //Bluetooth scan dialog
-        if (!bluetoothScanDismissed) {
-            bluetoothScanDismissed = true;
-            connectBluetoothDevices(false, false);
             return;
         }
     }
@@ -525,7 +485,7 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
             tabLayout.setVisibility(View.GONE);
 
         try {
-            experiment.init(sensorManager, (LocationManager)this.getSystemService(Context.LOCATION_SERVICE));
+            experiment.init(sensorManager, null);
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
@@ -543,22 +503,9 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
         }
         this.experiment = experiment; //Store the loaded experiment
         if (experiment.loaded) { //Everything went fine, no errors
-            if (experiment.gpsIn != null) {
-                experiment.gpsIn.prepare(res);
-            }
-
             timedRun = experiment.timedRun;
             timedRunStartDelay = experiment.timedRunStartDelay;
             timedRunStopDelay = experiment.timedRunStopDelay;
-
-            //If the experiment has been launched from a Bluetooth scan, we need to set the bluetooth device in the experiment so it does not ask the user again
-            String btAddress = intent.getStringExtra(EXPERIMENT_PRESELECTED_BLUETOOTH_ADDRESS);
-            if (btAddress != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                for (Bluetooth bt : this.experiment.bluetoothInputs)
-                    bt.deviceAddress = btAddress;
-                for (Bluetooth bt : this.experiment.bluetoothOutputs)
-                    bt.deviceAddress = btAddress;
-            }
 
             //We should set the experiment title....
             TextView titleText = ((TextView) findViewById(R.id.titleText));
@@ -578,17 +525,11 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
                 timedRun = savedInstanceState.getBoolean(STATE_TIMED_RUN, false); //timed run activated?
                 timedRunStartDelay = savedInstanceState.getDouble(STATE_TIMED_RUN_START_DELAY); //start elay of timed run
                 timedRunStopDelay = savedInstanceState.getDouble(STATE_TIMED_RUN_STOP_DELAY); //stop delay of timed run
-                timedRunBeepCountdown = savedInstanceState.getBoolean(STATE_TIMED_RUN_BEEP_COUNTDOWN);
-                timedRunBeepStart = savedInstanceState.getBoolean(STATE_TIMED_RUN_BEEP_START);
-                timedRunBeepRunning = savedInstanceState.getBoolean(STATE_TIMED_RUN_BEEP_RUNNING);
-                timedRunBeepStop = savedInstanceState.getBoolean(STATE_TIMED_RUN_BEEP_STOP);
+                // Simplified: removed audio beep state restoration
                 menuHintDismissed = savedInstanceState.getBoolean(STATE_MENU_HINT_DISMISSED);
                 startHintDismissed = savedInstanceState.getBoolean(STATE_START_HINT_DISMISSED);
                 saveLocallyDismissed = savedInstanceState.getBoolean(STATE_SAVE_LOCALLY_DISMISSED);
-                bluetoothScanDismissed = savedInstanceState.getBoolean(STATE_BLUETOOTH_SCAN_DISMISSED);
-                networkScanDismissed = savedInstanceState.getBoolean(STATE_NETWORK_SCAN_DISMISSED);
                 sensorWarningDismissed = savedInstanceState.getBoolean(STATE_SENSOR_WARNING_DISMISSED);
-                dataPolicyDismissed = savedInstanceState.getBoolean(STATE_DATA_POLICY_DISMISSED);
 
 
                 //Which view was active when we were stopped?
@@ -605,17 +546,6 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
 
             //Also invalidate the options menu, so it can activate any controls, that are valid for a loaded experiment
             invalidateOptionsMenu();
-
-            if (experiment.depthInput != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                try {
-                    experiment.depthInput.startCameras();
-                } catch (Exception e) {
-                    Toast.makeText(this, "DepthPreview: setCamera could not restart depthInput: " + e.getMessage(), Toast.LENGTH_LONG).show(); //Present message
-                }
-            }
-
-            if (experiment.cameraInput != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                experiment.cameraInput.startCameraFromProvider(this, this.getApplication());
 
             //Start the remote server if activated
             startRemoteServer();
@@ -692,91 +622,7 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
         dialog.show();
     }
 
-    public void connectNetworkConnections() {
-        for (NetworkConnection networkConnection : experiment.networkConnections) {
-            if (networkConnection.specificAddress == null) {
-                networkConnection.connect(this);
-                return;
-            }
-        }
-        networkScanDismissed = true;
-        showInitialDialogs();
-    }
 
-    public void networkScanDialogDismissed() {
-        networkScanDismissed = true;
-        showInitialDialogs();
-    }
-
-    public void dataPolicyInfoDismissed() {
-        dataPolicyDismissed = true;
-        showInitialDialogs();
-    }
-
-    public static boolean isBluetoothConnectionSuccessful = false;
-
-    // connects to the bluetooth devices in an async task
-    // if startMeasurement is true the measurement will be started automatically once all devices are connected
-    public void connectBluetoothDevices(boolean startMeasurement, final boolean timed) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            if (!(experiment.bluetoothInputs.isEmpty() && experiment.bluetoothOutputs.isEmpty())) {
-                isBluetoothConnectionSuccessful = false;
-                // connect all bluetooth devices with an asyncTask
-                final Bluetooth.ConnectBluetoothTask btTask = new Bluetooth.ConnectBluetoothTask();
-                btTask.progress = ProgressDialog.show(Experiment.this, getResources().getString(R.string.loadingTitle), getResources().getString(R.string.loadingBluetoothConnectionText), true);
-
-                // define onSuccess
-                btTask.onSuccess = () -> {
-                    isBluetoothConnectionSuccessful = true;
-                    showBluetoothConnectedDeviceInfo();
-
-                    if(startMeasurement){
-                        if(timed){
-                            startTimedMeasurement();
-                        } else {
-                            startMeasurement();
-                        }
-                    }
-                };
-
-                // set attributes of errorDialog
-                Bluetooth.errorDialog.context = Experiment.this;
-                Bluetooth.errorDialog.cancel = () -> btTask.progress.dismiss();
-                Bluetooth.errorDialog.tryAgain = () -> {
-                    // start a new task with the same attributes
-                    Bluetooth.ConnectBluetoothTask newBtTask = new Bluetooth.ConnectBluetoothTask();
-                    newBtTask.progress = btTask.progress;
-                    newBtTask.onSuccess = btTask.onSuccess;
-                    // show ProgressDialog again
-                    if (btTask.progress != null) {
-                        btTask.progress.show();
-                    }
-                    newBtTask.onSuccess = () -> {
-                        isBluetoothConnectionSuccessful = true;
-                        showBluetoothConnectedDeviceInfo();
-                    };
-                    newBtTask.execute(experiment.bluetoothInputs, experiment.bluetoothOutputs);
-
-                };
-                btTask.execute(experiment.bluetoothInputs, experiment.bluetoothOutputs);
-            }
-        }
-    }
-
-    private void showBluetoothConnectedDeviceInfo(){
-
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view_battery);
-        if(Helper.isDarkTheme(getResources())){
-            recyclerView.setBackgroundColor(getResources().getColor(R.color.phyphox_black_40));
-        }else {
-            recyclerView.setBackgroundColor(getResources().getColor(R.color.phyphox_white_90));
-        }
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        deviceInfoAdapter = new ConnectedBluetoothDeviceInfoAdapter(connectedDevices);
-        recyclerView.setAdapter(deviceInfoAdapter);
-        bluetoothConnectionSuccessful = true;
-    }
 
     @SuppressLint("ClickableViewAccessibility")
     private void showHint(int textRessource, PopupWindow.OnDismissListener dismissListener, final int gravity, final int fromRight) {
@@ -922,8 +768,6 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
         MenuItem timed_run = menu.findItem(R.id.action_timedRun);
         MenuItem remote = menu.findItem(R.id.action_remoteServer);
         MenuItem saveLocally = menu.findItem(R.id.action_saveLocally);
-        MenuItem calibratedMagnetometer = menu.findItem(R.id.action_calibrated_magnetometer);
-        MenuItem forceGNSSItem = menu.findItem(R.id.action_force_gnss);
 
         Iterator it = experiment.highlightedLinks.entrySet().iterator();
         for (int i = 1; i <= 5; i++) {
@@ -981,29 +825,6 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
 
         //The remote server option is checked if activated
         remote.setChecked(serverEnabled);
-
-        //The calibrated magnetometer entry is only shown if the experiment uses a magnetometer and if the API level is high enough to offer an uncalibrated alternative
-        boolean magnetometer = false;
-        boolean calibrated = false;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2 && sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED) != null) {
-            for (SensorInput sensor : experiment.inputSensors) {
-                if (sensor.type == Sensor.TYPE_MAGNETIC_FIELD || sensor.type == Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED) {
-                    magnetometer = true;
-                    calibrated = sensor.calibrated;
-                }
-            }
-        }
-        calibratedMagnetometer.setVisible(magnetometer);
-        calibratedMagnetometer.setChecked(calibrated);
-
-        boolean gps = false;
-        boolean forceGNSS = false;
-        if (experiment.gpsIn != null) {
-            gps = true;
-            forceGNSS = experiment.gpsIn.forceGNSS;
-        }
-        forceGNSSItem.setVisible(gps);
-        forceGNSSItem.setChecked(forceGNSS);
 
         //If the timedRun is active, we have to set the value of the countdown
         if (timedRun) {
@@ -1117,6 +938,7 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
                 AlertDialog dialog = builder.create();
                 dialog.show();
             } else {
+                // Export experiment data
                 experiment.export(this);
             }
             return true;
@@ -1182,24 +1004,6 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
             Helper.getScreenshot(screenView, this.getWindow(), callback);
 
 
-        }
-
-        if (id == R.id.action_calibrated_magnetometer) {
-            stopMeasurement();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                for (SensorInput sensor : experiment.inputSensors) {
-                    if (sensor.type == Sensor.TYPE_MAGNETIC_FIELD || sensor.type == Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED) {
-                        sensor.calibrated = !item.isChecked();
-                    }
-                }
-            }
-        }
-
-        if (id == R.id.action_force_gnss) {
-            stopMeasurement();
-            if (experiment.gpsIn != null) {
-                experiment.gpsIn.forceGNSS= !item.isChecked();
-            }
         }
 
         //The remote server button. Show a warning with IP information and start the server if confirmed.
@@ -1354,6 +1158,15 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
                             experiment.newUserInput = true;
                         }
                     }
+
+                    // Update filament elements with rotation matrix
+                    for (int i = 0; i < experiment.experimentViews.size(); i++) {
+                        for (ExpView.expViewElement eve : experiment.experimentViews.elementAt(i).elements) {
+                            if (eve instanceof ExpView.filamentElement) {
+                                ((ExpView.filamentElement) eve).updateRotation(rotationMatrix);
+                            }
+                        }
+                    }
                 } catch (Exception e) {
                     Log.e("updateViews", "Unhandled exception.", e);
                 } finally {
@@ -1430,38 +1243,15 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
         beforeStart = false;
 
         //Start the sensors
-        try {
-            experiment.startAllIO();
-        } catch (Bluetooth.BluetoothException e) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                stopMeasurement(); // stop experiment
-                // show an error dialog
-                Bluetooth.errorDialog.message = e.getMessage();
-                Bluetooth.errorDialog.context = Experiment.this;
-                // try to connect the bluetooth devices again when the user clicks "try again"
-                Bluetooth.errorDialog.tryAgain = new Runnable() {
-                  @Override
-                     public void run() {
-                      connectBluetoothDevices(true, false);
-                  }
-                 };
-                 Bluetooth.errorDialog.run();
-                 return;
-	        }
-        } catch (DepthInput.DepthInputException e) {
-            stopMeasurement(); // stop experiment
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(e.getMessage())
-                    .setPositiveButton(R.string.ok, null);
-            AlertDialog dialog = builder.create();
-            dialog.show();
-        }
+        experiment.startAllIO();
 
         //Set measurement state
         measuring = true;
 
         //No more turning off during the measurement
         setKeepScreenOn(true);
+
+
 
         //Start the analysis "loop"
         Thread t = new Thread(updateData);
@@ -1473,33 +1263,8 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
             millisUntilFinished = Math.round(timedRunStopDelay * 1000);
             cdTimer = new CountDownTimer(millisUntilFinished, 20) {
 
-                int nextBeep = -1;
-                boolean relative = false;
-
                 public void onTick(long muf) {
                     //On each tick update the menu to show the remaining time
-                    if (timedRunBeepRunning || timedRunBeepStop) {
-                        if (nextBeep < 0)
-                            nextBeep = (int)(Math.floor(muf/1000. - 0.6));
-                        if (muf/1000. < nextBeep + 0.4) {
-                            if (nextBeep == 0 && timedRunBeepStop) {
-                                if (relative)
-                                    audioOutput.beepRelative(800, 0.5, 1.0);
-                                else {
-                                    audioOutput.beep(800, 0.5, muf / 1000. - nextBeep);
-                                    relative = true;
-                                }
-                            } else if (nextBeep > 0 && timedRunBeepRunning) {
-                                if (relative)
-                                    audioOutput.beepRelative(1000, 0.1, 1.0);
-                                else {
-                                    audioOutput.beep(1000, 0.1, muf / 1000. - nextBeep);
-                                    relative = true;
-                                }
-                            }
-                            nextBeep--;
-                        }
-                    }
                     millisUntilFinished = muf;
                     invalidateOptionsMenu();
                 }
@@ -1517,85 +1282,12 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
         //No more turning off during the measurement
         setKeepScreenOn(true);
 
-	if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            // check if all Bluetooth devices are connected and display an errorDialog if not
-            Bluetooth notConnectedDevice = null;
-            for (Bluetooth b : experiment.bluetoothInputs) {
-                if (!b.isConnected()) {
-                    notConnectedDevice = b;
-                    break;
-                }
-            }
-            if (notConnectedDevice == null) {
-                for (Bluetooth b : experiment.bluetoothOutputs) {
-                    if (!b.isConnected()) {
-                        notConnectedDevice = b;
-                        break;
-                    }
-                }
-            }
-            if (notConnectedDevice != null) {
-                // show an error dialog
-                Bluetooth.errorDialog.message = getResources().getString(R.string.bt_exception_no_connection)+Bluetooth.BluetoothException.getMessage(notConnectedDevice);
-                Bluetooth.errorDialog.context = Experiment.this;
-                // try to connect the bluetooth devices again when the user clicks "try again"
-                Bluetooth.errorDialog.tryAgain = new Runnable() {
-                    @Override
-                    public void run() {
-                        connectBluetoothDevices(true, true);
-                    }
-                };
-                Bluetooth.errorDialog.run();
-                return;
-            }
-        }
-
-        if (timedRunBeepCountdown || timedRunBeepStart || timedRunBeepRunning || timedRunBeepStop) {
-            if (experiment.audioOutput == null) {
-                if (audioOutput == null) {
-                    audioOutput = new AudioOutput(false, 48000, true);
-                    try {
-                        audioOutput.init();
-                    } catch (Exception e) {
-                        return;
-                    }
-                }
-            } else
-                audioOutput = experiment.audioOutput;
-            audioOutput.start(true);
-            audioOutput.play();
-        }
-
         //Not much more to do here. Just set up a countdown that will start the measurement
         millisUntilFinished = Math.round(timedRunStartDelay*1000);
         cdTimer = new CountDownTimer(millisUntilFinished, 20) {
-            int nextBeep = -1;
-            boolean relative = false;
 
             public void onTick(long muf) {
                 //On each tick update the menu to show the remaining time
-                if (timedRunBeepCountdown || timedRunBeepStart) {
-                    if (nextBeep < 0)
-                        nextBeep = (int)(Math.floor(muf/1000. - 0.5));
-                    if (muf/1000. < nextBeep + 0.4) {
-                        if (nextBeep == 0 && timedRunBeepStart) {
-                            if (relative)
-                                audioOutput.beepRelative(1000, 0.5, 1.0);
-                            else {
-                                audioOutput.beep(1000, 0.5, muf / 1000. - nextBeep);
-                                relative = true;
-                            }
-                        } else if (nextBeep > 0 && timedRunBeepCountdown) {
-                            if (relative)
-                                audioOutput.beepRelative(800, 0.1, 1.0);
-                            else {
-                                audioOutput.beep(800, 0.1, muf / 1000. - nextBeep);
-                                relative = true;
-                            }
-                        }
-                        nextBeep--;
-                    }
-                }
                 millisUntilFinished = muf;
                 invalidateOptionsMenu();
             }
@@ -1622,6 +1314,8 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
             cdTimer = null;
             millisUntilFinished = 0;
         }
+
+
 
         //Stop any inputs (Sensors, microphone) or outputs (speaker) that might still be running
         //be careful as stopMeasurement might be called without a valid experiment
@@ -1654,6 +1348,8 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
         if (remote != null && serverEnabled)
             remote.forceFullUpdate = true;
     }
+
+
 
     //Start the remote server (see remoteServer class)
     private void startRemoteServer() {
@@ -1822,17 +1518,10 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
             outState.putBoolean(STATE_TIMED_RUN, timedRun); //timed run status
             outState.putDouble(STATE_TIMED_RUN_START_DELAY, timedRunStartDelay); //timed run start delay
             outState.putDouble(STATE_TIMED_RUN_STOP_DELAY, timedRunStopDelay); //timed run stop delay
-            outState.putBoolean(STATE_TIMED_RUN_BEEP_COUNTDOWN, timedRunBeepCountdown);
-            outState.putBoolean(STATE_TIMED_RUN_BEEP_START, timedRunBeepStart);
-            outState.putBoolean(STATE_TIMED_RUN_BEEP_RUNNING, timedRunBeepRunning);
-            outState.putBoolean(STATE_TIMED_RUN_BEEP_STOP, timedRunBeepStop);
             outState.putBoolean(STATE_MENU_HINT_DISMISSED, menuHintDismissed);
             outState.putBoolean(STATE_START_HINT_DISMISSED, startHintDismissed);
             outState.putBoolean(STATE_SAVE_LOCALLY_DISMISSED, saveLocallyDismissed);
-            outState.putBoolean(STATE_BLUETOOTH_SCAN_DISMISSED, bluetoothScanDismissed);
-            outState.putBoolean(STATE_NETWORK_SCAN_DISMISSED, networkScanDismissed);
             outState.putBoolean(STATE_SENSOR_WARNING_DISMISSED, sensorWarningDismissed);
-            outState.putBoolean(STATE_DATA_POLICY_DISMISSED, dataPolicyDismissed);
         } catch (Exception e) {
             //Something went wrong?
             //Discard all the data to get a clean new activity and start fresh.
@@ -1856,24 +1545,6 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
                     wakeLock.release();
             }
         }
-    }
-
-    Runnable runDeviceUpdate = new Runnable() {
-        @Override
-        public void run() {
-            Log.d("ConnectedDeivce", "runDeviceUpdate: "+connectedDevices);
-            if(deviceInfoAdapter != null){
-                Log.d("ConnectedDeivce", "runDeviceUpdate: deviceInfoAdapter:  "+connectedDevices);
-                deviceInfoAdapter.update(connectedDevices);
-            }
-        }
-    };
-
-    @Override
-    public void updateConnectedDevice(ArrayList<ConnectedDeviceInfo> connectedDeviceInfos) {
-        connectedDevices = connectedDeviceInfos;
-        Log.d("ConnectedDeivce", "updateConnectedDevice: "+connectedDeviceInfos);
-        runOnUiThread(runDeviceUpdate);
     }
 
     class TimedRun {
@@ -1911,59 +1582,6 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
             etTimedRunStopDelay.addTextChangedListener(new DecimalTextWatcher());
             etTimedRunStopDelay.setText(String.valueOf(timedRunStopDelay));
 
-            final class IgnoreChanges {
-                boolean ignore = true;
-            }
-            final IgnoreChanges ignoreChanges = new IgnoreChanges();
-            final Button cbTimedRunBeeperAll = (Button) vLayout.findViewById(R.id.timedRunBeepAll);
-            final class AllButtonOn {
-                boolean on = false;
-            }
-            final AllButtonOn allButtonOn = new AllButtonOn();
-            final SwitchCompat cbTimedRunBeeperCountdown = (SwitchCompat) vLayout.findViewById(R.id.timedRunBeepCountdown);
-            final SwitchCompat cbTimedRunBeeperStart = (SwitchCompat) vLayout.findViewById(R.id.timedRunBeepStart);
-            final SwitchCompat cbTimedRunBeeperRunning = (SwitchCompat) vLayout.findViewById(R.id.timedRunBeepRunning);
-            final SwitchCompat cbTimedRunBeeperStop = (SwitchCompat) vLayout.findViewById(R.id.timedRunBeepStop);
-
-            final View.OnClickListener allButtonClicked;
-
-            final CompoundButton.OnCheckedChangeListener updateAllButton = new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (ignoreChanges.ignore)
-                        return;
-
-                    allButtonOn.on = (cbTimedRunBeeperCountdown.isChecked() || cbTimedRunBeeperStart.isChecked() || cbTimedRunBeeperRunning.isChecked() || cbTimedRunBeeperStop.isChecked());
-                    cbTimedRunBeeperAll.setText(allButtonOn.on ? R.string.deactivate_all : R.string.activate_all);
-                }
-            };
-
-            allButtonClicked = view -> {
-                ignoreChanges.ignore = true;
-
-                allButtonOn.on = !allButtonOn.on;
-                cbTimedRunBeeperAll.setText(allButtonOn.on ? R.string.deactivate_all : R.string.activate_all);
-                cbTimedRunBeeperCountdown.setChecked(allButtonOn.on);
-                cbTimedRunBeeperStart.setChecked(allButtonOn.on);
-                cbTimedRunBeeperRunning.setChecked(allButtonOn.on);
-                cbTimedRunBeeperStop.setChecked(allButtonOn.on);
-
-                ignoreChanges.ignore = false;
-            };
-
-            cbTimedRunBeeperAll.setOnClickListener(allButtonClicked);
-            cbTimedRunBeeperCountdown.setOnCheckedChangeListener(updateAllButton);
-            cbTimedRunBeeperStart.setOnCheckedChangeListener(updateAllButton);
-            cbTimedRunBeeperRunning.setOnCheckedChangeListener(updateAllButton);
-            cbTimedRunBeeperStop.setOnCheckedChangeListener(updateAllButton);
-
-            cbTimedRunBeeperCountdown.setChecked(timedRunBeepCountdown);
-            cbTimedRunBeeperStart.setChecked(timedRunBeepStart);
-            cbTimedRunBeeperRunning.setChecked(timedRunBeepRunning);
-            cbTimedRunBeeperStop.setChecked(timedRunBeepStop);
-            ignoreChanges.ignore = false;
-            updateAllButton.onCheckedChanged(cbTimedRunBeeperStop, timedRunBeepStop);
-
             builder.setView(vLayout)
                     .setTitle(R.string.timedRunDialogTitle)
                     .setPositiveButton(R.string.ok, (dialog, id) -> {
@@ -1983,11 +1601,6 @@ public class Experiment extends AppCompatActivity implements View.OnClickListene
                         } catch (Exception e) {
                             timedRunStopDelay = 0.;
                         }
-
-                        timedRunBeepCountdown = cbTimedRunBeeperCountdown.isChecked();
-                        timedRunBeepStart = cbTimedRunBeeperStart.isChecked();
-                        timedRunBeepRunning = cbTimedRunBeeperRunning.isChecked();
-                        timedRunBeepStop = cbTimedRunBeeperStop.isChecked();
 
                         if (timedRun && measuring)
                             stopMeasurement();

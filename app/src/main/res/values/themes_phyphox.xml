@@ -1,32 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!-- Generated with http://android-holo-colors.com -->
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="Theme.Phyphox.DayNight" parent="Theme.Phyphox"/>
-
-    <style name="Widget.Phyphox.DayNight" parent="Widget.Phyphox.Light"/>
-
-    <style name="Theme.Phyphox" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:textColor">@color/phyphox_black_60</item>
-        <item name="android:textColorPrimary">@color/phyphox_black_60</item>
-        <item name="android:textColorSecondary">@color/phyphox_black_60</item>
-        <item name="colorAccent">@color/phyphox_primary</item>
-        <item name="android:colorAccent" tools:ignore="NewApi">@color/phyphox_primary</item>
-        <item name="android:textColorHighlight">@color/phyphox_primary</item>
+    <style name="Theme.Phyphox" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:textColor">@color/phyphox_black_100</item>
+        <item name="android:textColorPrimary">@color/phyphox_black_100</item>
+        <item name="android:textColorSecondary">@color/phyphox_black_40</item>
+        <item name="colorAccent">@color/accent_color</item>
+        <item name="android:colorAccent" tools:ignore="NewApi">@color/accent_color</item>
+        <item name="android:textColorHighlight">@color/highlight_color</item>
         <item name="backgroundColor">@color/phyphox_white_100</item>
-        <item name="colorPrimary">@color/phyphox_primary</item>
-        <item name="colorPrimaryDark">@color/phyphox_black_80</item>
+        <item name="colorPrimary">@color/button_background</item>
+        <item name="colorPrimaryDark">@color/button_pressed_color</item>
+        <item name="colorOnPrimary">@color/button_text_color</item>
+        <item name="colorSecondary">@color/accent_color</item>
+        <item name="colorSurface">@color/phyphox_white_100</item>
+        <item name="colorOnSurface">@color/phyphox_black_100</item>
         <item name="android:textSize">@dimen/font</item>
 
-        <!-- Adding this removed the default color in experiment activity while migrating to material design 3, which then creates the extra color padding in top and below-->
         <item name="android:itemBackground">@color/phyphox_white_100</item>
-        <!-- Adding this replaced the extra top and bottom padding default color with white -->
-        <item name="colorSurfaceContainer">@color/phyphox_white_100</item>
-
-        <!-- Provides the icon color in whole application, like in toolbar icon, settings icon.
-        But some widgets are overwritten with its specific tint, for example, in BottomNavigationView-->
-        <item name="tint">@color/phyphox_white_100</item>
+        
+        <item name="tint">@color/button_background</item>
 
         <item name="android:windowBackground">@color/phyphox_white_100</item>
 
@@ -40,17 +33,22 @@
 
         <item name="bottomSheetDialogTheme">@style/ThemeOverlay.App.BottomSheetDialog</item>
 
+        <!-- Android 12+ splash screen settings -->
+        <item name="android:windowSplashScreenAnimatedIcon">@null</item>
+        <item name="android:windowSplashScreenBrandingImage">@null</item>
+        <item name="android:windowSplashScreenBackground">@color/phyphox_white_100</item>
+
     </style>
 
     <style name="rwth" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:textColor">@color/phyphox_black_100</item>
-        <item name="colorPrimary">@color/phyphox_black_100</item>
-        <item name="colorAccent">@color/phyphox_rwth_primary</item>
+        <item name="colorPrimary">@color/button_background</item>
+        <item name="colorAccent">@color/accent_color</item>
         <item name="alertDialogTheme">@style/rwthDialog</item>
     </style>
 
 
-    <style name="Widget.Phyphox.Light" parent="Theme.Phyphox.DayNight">
+    <style name="Widget.Phyphox.Light" parent="Theme.Phyphox">
         <item name="android:textColor">@color/phyphox_black_100</item>
         <item name="tint">@color/phyphox_black_100</item>
         <item name="android:tint">@color/phyphox_black_100</item>
@@ -68,7 +66,7 @@
         <item name="colorPrimary">@color/phyphox_primary</item>
     </style>
 
-    <style name="ThemeOverlay.App.BottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog">
+    <style name="ThemeOverlay.App.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/BottomSheetDialog.Light</item>
     </style>
 

@@ -15,14 +15,7 @@
             >
 
         </androidx.preference.ListPreference>
-        <androidx.preference.Preference
-            android:summary="@string/settingsTranslationMore"
-            android:icon="@drawable/setting_translate"
-            android:title="@string/settingsTranslation">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="@string/translationToWebsiteURL" />
-        </androidx.preference.Preference>
+
     </androidx.preference.PreferenceCategory>
 
     <PreferenceCategory
@@ -35,17 +28,6 @@
             android:layout="@layout/seekbar_preference_custom"
             android:defaultValue="1"
             android:key="graph_size_dialog"
-            />
-
-
-
-        <ListPreference
-            android:key="@string/setting_dark_mode_key"
-            android:icon="@drawable/ic_dark_mode"
-            android:summary="%s"
-            android:defaultValue="1"
-            app:useSimpleSummaryProvider="true"
-            android:title="@string/settings_theme_title"
             />
 
     </PreferenceCategory>

@@ -1,186 +1,75 @@
-<RelativeLayout
+<LinearLayout
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="0dp"
-    android:paddingRight="0dp"
-    android:paddingTop="0dp"
-    android:paddingBottom="0dp" tools:context=".ExperimentList.ExperimentListActivity"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/md_surface"
+    tools:context=".ExperimentList.ExperimentListActivity"
     android:id="@+id/rootExperimentList">
 
-    <RelativeLayout android:id="@+id/expListHeader"
-        android:background="@color/phyphox_black_60"
-        android:elevation="8dp"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/expListHeader"
         android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/button_background"
+        android:elevation="4dp"
         android:fitsSystemWindows="true"
-        android:layout_height="wrap_content">
+        app:title="Gyroscope"
+        app:titleTextColor="@color/button_text_color"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:text="Gyroscope"
+            android:textSize="20sp"
+            android:textColor="@color/button_text_color"
+            android:fontFamily="sans-serif-medium"/>
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/titleIconSizeCustom"
-            android:id="@+id/logo"
-            android:background="@drawable/phyphox_dark"
-            android:scaleType="fitStart"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"/>
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/titleIconSize"
             android:id="@+id/credits"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            app:tint="@color/phyphox_white_90"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:padding="8dp"
+            android:background="@drawable/rounded_button"
+            app:tint="@color/button_text_color"
             app:srcCompat="@drawable/info"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:adjustViewBounds="true"
-            android:layout_alignParentStart="false"
-            android:layout_alignParentLeft="false"
-            android:layout_alignTop="@+id/logo"
             android:contentDescription="@string/info"/>
 
+    </androidx.appcompat.widget.Toolbar>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/md_secondary_container"/>
 
-    </RelativeLayout>
-
-    <de.rwth_aachen.phyphox.Helper.ReportingScrollView android:id="@+id/experimentScroller"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:fillViewport="false"
+    <de.rwth_aachen.phyphox.Helper.ReportingScrollView
+        android:id="@+id/experimentScroller"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
         android:clipToPadding="false"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
+        android:padding="16dp">
 
-        android:layout_below="@+id/expListHeader">
-
-        <LinearLayout android:id="@+id/experimentList"
+        <LinearLayout
+            android:id="@+id/experimentList"
             android:clipChildren="true"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="@dimen/experiment_list_optional_top_padding"
-           />
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"/>
 
     </de.rwth_aachen.phyphox.Helper.ReportingScrollView>
 
-    <View android:id="@+id/experimentListDimmer"
+    <View
+        android:id="@+id/experimentListDimmer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="invisible"
         android:background="@color/phyphox_black_60"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton android:id="@+id/newExperimentQR"
-        app:useCompatPadding="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/newExperimentQR"
-        android:text="@string/newExperimentQR"
-        android:backgroundTint="@color/phyphox_white_80"
-        app:srcCompat="@drawable/new_experiment_qr"
-        app:tint="@color/phyphox_black_80"
-        style="?attr/floatingActionButtonSmallStyle"
-        app:borderWidth="0dp"
-        android:visibility="invisible"
-        android:clickable="false"
-        android:layout_marginRight="9dp"
-        android:layout_marginBottom="-18dp"
-        android:layout_above="@id/newExperimentBluetooth"
-        android:layout_alignRight="@id/newExperiment"
-        android:elevation="12dp"
-        />
-
-    <TextView android:id="@+id/newExperimentQRLabel"
-        android:text="@string/newExperimentQR"
-        android:layout_toLeftOf="@id/newExperimentQR"
-        android:layout_alignTop="@id/newExperimentQR"
-        android:layout_width="wrap_content"
-        android:gravity="center"
-        android:textColor="@color/phyphox_white_100"
-        android:visibility="invisible"
-        android:layout_height="72dp" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton android:id="@+id/newExperimentBluetooth"
-        app:useCompatPadding="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/newExperimentBluetooth"
-        android:text="@string/newExperimentBluetooth"
-        app:srcCompat="@drawable/new_experiment_bluetooth"
-        app:tint="@color/phyphox_white_100"
-        android:backgroundTint="@color/phyphox_blue_100"
-        app:borderWidth="0dp"
-        style="?attr/floatingActionButtonSmallStyle"
-        android:visibility="invisible"
-        android:clickable="false"
-        android:layout_marginRight="9dp"
-        android:layout_marginBottom="-18dp"
-        android:layout_above="@id/newExperimentSimple"
-        android:layout_alignRight="@id/newExperiment"
-        android:elevation="12dp"
-        />
-
-    <TextView android:id="@+id/newExperimentBluetoothLabel"
-        android:text="@string/newExperimentBluetooth"
-        android:layout_toLeftOf="@id/newExperimentBluetooth"
-        android:layout_alignTop="@id/newExperimentBluetooth"
-        android:layout_width="wrap_content"
-        android:gravity="center"
-        android:textColor="@color/phyphox_white_100"
-        android:visibility="invisible"
-        android:layout_height="72dp" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton android:id="@+id/newExperimentSimple"
-        app:useCompatPadding="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/newExperimentSimple"
-        android:text="@string/newExperimentSimple"
-        app:srcCompat="@drawable/new_experiment_simple"
-        app:tint="@color/phyphox_white_100"
-        style="?attr/floatingActionButtonSmallStyle"
-        app:borderWidth="0dp"
-        android:backgroundTint="@color/phyphox_red"
-        android:visibility="invisible"
-        android:clickable="false"
-        android:layout_marginRight="9dp"
-        android:layout_marginBottom="-18dp"
-        android:layout_above="@id/newExperiment"
-        android:layout_alignRight="@id/newExperiment"
-        android:elevation="12dp"
-        />
-
-    <TextView android:id="@+id/newExperimentSimpleLabel"
-        android:text="@string/newExperimentSimple"
-        android:layout_toLeftOf="@id/newExperimentSimple"
-        android:layout_alignTop="@id/newExperimentSimple"
-        android:layout_width="wrap_content"
-        android:gravity="center"
-        android:textColor="@color/phyphox_white_100"
-        android:visibility="invisible"
-        android:layout_height="72dp" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton android:id="@+id/newExperiment"
-        app:useCompatPadding="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/newExperiment"
-        android:text="@string/newExperiment"
-        app:srcCompat="@drawable/new_experiment"
-        app:fabSize="normal"
-        app:tint="@color/phyphox_white_100"
-        app:backgroundTint="@color/phyphox_primary"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:elevation="12dp"
-        />
-
-</RelativeLayout>
+</LinearLayout>

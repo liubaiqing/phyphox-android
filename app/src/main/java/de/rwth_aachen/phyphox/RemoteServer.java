@@ -728,47 +728,7 @@ public class RemoteServer {
             json.put("buffers", buffers);
 
             JSONArray inputs = new JSONArray();
-            if (experiment.audioRecord != null) {
-                JSONArray outputs = new JSONArray();
-                outputs.put(new JSONObject().put("out", experiment.micOutput));
-                if (!experiment.micRateOutput.isEmpty())
-                    outputs.put(new JSONObject().put("rate", experiment.micRateOutput));
-
-                inputs.put(new JSONObject()
-                        .put("source", "audio")
-                        .put("outputs", outputs)
-                );
-            }
-            if (experiment.gpsIn != null) {
-                JSONArray outputs = new JSONArray();
-                if (experiment.gpsIn.dataLat != null)
-                    outputs.put(new JSONObject().put("lat", experiment.gpsIn.dataLat.name));
-                if (experiment.gpsIn.dataLon != null)
-                    outputs.put(new JSONObject().put("lon", experiment.gpsIn.dataLon.name));
-                if (experiment.gpsIn.dataZ != null)
-                    outputs.put(new JSONObject().put("z", experiment.gpsIn.dataZ.name));
-                if (experiment.gpsIn.dataZWGS84 != null)
-                    outputs.put(new JSONObject().put("zwgs84", experiment.gpsIn.dataZWGS84.name));
-                if (experiment.gpsIn.dataV != null)
-                    outputs.put(new JSONObject().put("v", experiment.gpsIn.dataV.name));
-                if (experiment.gpsIn.dataDir != null)
-                    outputs.put(new JSONObject().put("dir", experiment.gpsIn.dataDir.name));
-                if (experiment.gpsIn.dataT != null)
-                    outputs.put(new JSONObject().put("t", experiment.gpsIn.dataT.name));
-                if (experiment.gpsIn.dataAccuracy != null)
-                    outputs.put(new JSONObject().put("accuracy", experiment.gpsIn.dataAccuracy.name));
-                if (experiment.gpsIn.dataZAccuracy != null)
-                    outputs.put(new JSONObject().put("zAccuracy", experiment.gpsIn.dataZAccuracy.name));
-                if (experiment.gpsIn.dataStatus != null)
-                    outputs.put(new JSONObject().put("status", experiment.gpsIn.dataStatus.name));
-                if (experiment.gpsIn.dataSatellites != null)
-                    outputs.put(new JSONObject().put("satellites", experiment.gpsIn.dataSatellites.name));
-
-                inputs.put(new JSONObject()
-                        .put("source", "location")
-                        .put("outputs", outputs)
-                );
-            }
+            // Simplified: removed audio and gps input handling
             for (SensorInput input : experiment.inputSensors) {
                 JSONArray outputs = new JSONArray();
 
@@ -790,10 +750,7 @@ public class RemoteServer {
                         .put("outputs", outputs)
                 );
             }
-            if (experiment.bluetoothInputs.size() > 0) {
-                inputs.put(new JSONObject()
-                        .put("source", "bluetooth"));
-            }
+            // Simplified: removed bluetooth input handling
             json.put("inputs", inputs);
 
             JSONArray export = new JSONArray();

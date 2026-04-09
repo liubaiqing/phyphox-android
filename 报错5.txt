@@ -1,0 +1,610 @@
+Executing tasks: [:app:assembleRegularDebug] in project D:\AndroidStudioProjects\phyphox-android
+
+
+> Configure project :app
+AGPBI: {"kind":"warning","text":"The option setting 'android.ndk.suppressMinSdkVersionError=21' is experimental.","sources":[{}]}
+AGPBI: {"kind":"warning","text":"DSL element 'isRenderscriptDebuggable' is obsolete and should be removed.\nIt will be removed in version 9.0 of the Android Gradle plugin.","sources":[{}]}
+Invalid https.proxyPort '', using default 443
+
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preRegularDebugBuild UP-TO-DATE
+> Task :app:mergeRegularDebugNativeDebugMetadata NO-SOURCE
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:generateRegularDebugBuildConfig UP-TO-DATE
+> Task :app:checkRegularDebugAarMetadata UP-TO-DATE
+> Task :app:generateRegularDebugResValues UP-TO-DATE
+> Task :app:mapRegularDebugSourceSetPaths UP-TO-DATE
+> Task :app:generateRegularDebugResources UP-TO-DATE
+> Task :app:mergeRegularDebugResources UP-TO-DATE
+> Task :app:createRegularDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksRegularDebug UP-TO-DATE
+> Task :app:processRegularDebugMainManifest UP-TO-DATE
+> Task :app:processRegularDebugManifest UP-TO-DATE
+> Task :app:processRegularDebugManifestForPackage UP-TO-DATE
+> Task :app:processRegularDebugResources UP-TO-DATE
+> Task :app:javaPreCompileRegularDebug UP-TO-DATE
+> Task :app:mergeRegularDebugShaders UP-TO-DATE
+> Task :app:compileRegularDebugShaders NO-SOURCE
+> Task :app:generateRegularDebugAssets UP-TO-DATE
+> Task :app:mergeRegularDebugAssets UP-TO-DATE
+> Task :app:compressRegularDebugAssets UP-TO-DATE
+> Task :app:checkRegularDebugDuplicateClasses UP-TO-DATE
+> Task :app:desugarRegularDebugFileDependencies UP-TO-DATE
+> Task :app:mergeExtDexRegularDebug UP-TO-DATE
+> Task :app:mergeLibDexRegularDebug UP-TO-DATE
+> Task :app:compileRegularDebugKotlin
+> Task :app:configureCMakeDebug[x86_64]-2
+
+> Task :app:compileRegularDebugJavaWithJavac FAILED
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\Experiment.java:299: 错误: 找不到符号
+                    filamentView.render();
+                                ^
+  符号:   方法 render()
+  位置: 类型为FilamentView的变量 filamentView
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\Experiment.java:328: 错误: 找不到符号
+            filamentView.release();
+                        ^
+  符号:   方法 release()
+  位置: 类型为FilamentView的变量 filamentView
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:73: 错误: 不兼容的类型: 从long转换到int可能会有损失
+        camera = engine.createCamera(cameraEntity);
+                                     ^
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:80: 错误: 找不到符号
+        engine.createDirectionalLight(lightEntity);
+              ^
+  符号:   方法 createDirectionalLight(long)
+  位置: 类型为Engine的变量 engine
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:82: 错误: 不兼容的类型: 从long转换到int可能会有损失
+        int light = lightManager.getInstance(lightEntity);
+                                             ^
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:86: 错误: 不兼容的类型: 从long转换到int可能会有损失
+        scene.addEntity(lightEntity);
+                        ^
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:93: 错误: 不兼容的类型: Surface无法转换为RenderTarget
+        view.setRenderTarget(surface);
+                             ^
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:95: 错误: 不兼容的类型: long无法转换为Camera
+        view.setCamera(cameraEntity);
+                       ^
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:119: 错误: 二元运算符 '!=' 的操作数类型错误
+        if (renderable != null) {
+                       ^
+  第一个类型:  long
+  第二个类型: <空值>
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:120: 错误: 不兼容的类型: 从long转换到int可能会有损失
+            scene.removeEntity(renderable);
+                               ^
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:121: 错误: 不兼容的类型: 从long转换到int可能会有损失
+            engine.destroyEntity(renderable);
+                                 ^
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:124: 错误: 二元运算符 '!=' 的操作数类型错误
+        if (cameraEntity != null) {
+                         ^
+  第一个类型:  long
+  第二个类型: <空值>
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:125: 错误: 不兼容的类型: 从long转换到int可能会有损失
+            engine.destroyEntity(cameraEntity);
+                                 ^
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:182: 错误: 找不到符号
+                .attribute(VertexBuffer.VertexAttribute.POSITION, 0, VertexBuffer.VertexBufferType.FLOAT3, 0, 12)
+                                                                                 ^
+  符号:   变量 VertexBufferType
+  位置: 类 VertexBuffer
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:179: 错误: 找不到符号
+        VertexBuffer vertexBuffer = VertexBuffer.Builder()
+                                                ^
+  符号:   方法 Builder()
+  位置: 类 VertexBuffer
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:196: 错误: 找不到符号
+                .bufferType(IndexBuffer.IndexType.USHORT)
+                                       ^
+  符号:   变量 IndexType
+  位置: 类 IndexBuffer
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:194: 错误: 找不到符号
+        IndexBuffer indexBuffer = IndexBuffer.Builder()
+                                             ^
+  符号:   方法 Builder()
+  位置: 类 IndexBuffer
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:211: 错误: 找不到符号
+        Material material = Material.builder()
+                                    ^
+  符号:   方法 builder()
+  位置: 类 Material
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:218: 错误: 不兼容的类型: 从long转换到int可能会有损失
+        int renderableInstance = renderableManager.getInstance(renderable);
+                                                               ^
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:221: 错误: 找不到符号
+        renderableManager.setRenderable(renderableInstance, 0, RenderableManager.PrimitiveType.TRIANGLES, 
+                         ^
+  符号:   方法 setRenderable(int,int,PrimitiveType,VertexBuffer,IndexBuffer,int,int)
+  位置: 类型为RenderableManager的变量 renderableManager
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:223: 错误: 找不到符号
+        renderableManager.setMaterialInstance(renderableInstance, 0, material.createInstance());
+                         ^
+  符号:   方法 setMaterialInstance(int,int,MaterialInstance)
+  位置: 类型为RenderableManager的变量 renderableManager
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:224: 错误: 找不到符号
+        renderableManager.setReceivesShadows(renderableInstance, true);
+                         ^
+  符号:   方法 setReceivesShadows(int,boolean)
+  位置: 类型为RenderableManager的变量 renderableManager
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:225: 错误: 找不到符号
+        renderableManager.setCastsShadows(renderableInstance, true);
+                         ^
+  符号:   方法 setCastsShadows(int,boolean)
+  位置: 类型为RenderableManager的变量 renderableManager
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:228: 错误: 不兼容的类型: 从long转换到int可能会有损失
+        scene.addEntity(renderable);
+                        ^
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:232: 错误: 不兼容的类型: 从long转换到int可能会有损失
+        transformInstance = transformManager.getInstance(renderable);
+                                                         ^
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:241: 错误: 对于setTransform(long,float[]), 找不到合适的方法
+        transformManager.setTransform(transformInstance, rotationMatrix);
+                        ^
+    方法 TransformManager.setTransform(int,float[])不适用
+      (参数不匹配; 从long转换到int可能会有损失)
+    方法 TransformManager.setTransform(int,double[])不适用
+      (参数不匹配; 从long转换到int可能会有损失)
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:244: 错误: 找不到符号
+        engine.frame();
+              ^
+  符号:   方法 frame()
+  位置: 类型为Engine的变量 engine
+注: 某些输入文件使用或覆盖了已过时的 API。
+注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+注: 某些输入文件使用了未经检查或不安全的操作。
+注: 有关详细信息, 请使用 -Xlint:unchecked 重新编译。
+注: 某些消息已经过简化; 请使用 -Xdiags:verbose 重新编译以获得完整输出
+27 个错误
+
+> Task :app:processRegularDebugJavaRes UP-TO-DATE
+> Task :app:mergeRegularDebugJavaResource UP-TO-DATE
+> Task :app:buildCMakeDebug[x86_64]-2
+> Task :app:mergeRegularDebugJniLibFolders UP-TO-DATE
+> Task :app:mergeRegularDebugNativeLibs UP-TO-DATE
+> Task :app:stripRegularDebugDebugSymbols UP-TO-DATE
+> Task :app:validateSigningRegularDebug UP-TO-DATE
+> Task :app:writeRegularDebugAppMetadata UP-TO-DATE
+> Task :app:writeRegularDebugSigningConfigVersions UP-TO-DATE
+[Incubating] Problems report is available at: file:///D:/AndroidStudioProjects/phyphox-android/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileRegularDebugJavaWithJavac'.
+> Compilation failed; see the compiler output below.
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:241: 错误: 对于setTransform(long,float[]), 找不到合适的方法
+          transformManager.setTransform(transformInstance, rotationMatrix);
+                          ^
+      方法 TransformManager.setTransform(int,float[])不适用
+        (参数不匹配; 从long转换到int可能会有损失)
+      方法 TransformManager.setTransform(int,double[])不适用
+        (参数不匹配; 从long转换到int可能会有损失)
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:119: 错误: 二元运算符 '!=' 的操作数类型错误
+          if (renderable != null) {
+                         ^
+    第一个类型:  long
+    第二个类型: <空值>
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:124: 错误: 二元运算符 '!=' 的操作数类型错误
+          if (cameraEntity != null) {
+                           ^
+    第一个类型:  long
+    第二个类型: <空值>
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:73: 错误: 不兼容的类型: 从long转换到int可能会有损失
+          camera = engine.createCamera(cameraEntity);
+                                       ^
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:82: 错误: 不兼容的类型: 从long转换到int可能会有损失
+          int light = lightManager.getInstance(lightEntity);
+                                               ^
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:86: 错误: 不兼容的类型: 从long转换到int可能会有损失
+          scene.addEntity(lightEntity);
+                          ^
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:93: 错误: 不兼容的类型: Surface无法转换为RenderTarget
+          view.setRenderTarget(surface);
+                               ^
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:95: 错误: 不兼容的类型: long无法转换为Camera
+          view.setCamera(cameraEntity);
+                         ^
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:120: 错误: 不兼容的类型: 从long转换到int可能会有损失
+              scene.removeEntity(renderable);
+                                 ^
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:121: 错误: 不兼容的类型: 从long转换到int可能会有损失
+              engine.destroyEntity(renderable);
+                                   ^
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:125: 错误: 不兼容的类型: 从long转换到int可能会有损失
+              engine.destroyEntity(cameraEntity);
+                                   ^
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:218: 错误: 不兼容的类型: 从long转换到int可能会有损失
+          int renderableInstance = renderableManager.getInstance(renderable);
+                                                                 ^
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:228: 错误: 不兼容的类型: 从long转换到int可能会有损失
+          scene.addEntity(renderable);
+                          ^
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:232: 错误: 不兼容的类型: 从long转换到int可能会有损失
+          transformInstance = transformManager.getInstance(renderable);
+                                                           ^
+  注: 某些输入文件使用了未经检查或不安全的操作。
+  注: 有关详细信息, 请使用 -Xlint:unchecked 重新编译。
+  注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+  注: 某些输入文件使用或覆盖了已过时的 API。
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\Experiment.java:299: 错误: 找不到符号
+                      filamentView.render();
+                                  ^
+    符号:   方法 render()
+    位置: 类型为FilamentView的变量 filamentView
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\Experiment.java:328: 错误: 找不到符号
+              filamentView.release();
+                          ^
+    符号:   方法 release()
+    位置: 类型为FilamentView的变量 filamentView
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:80: 错误: 找不到符号
+          engine.createDirectionalLight(lightEntity);
+                ^
+    符号:   方法 createDirectionalLight(long)
+    位置: 类型为Engine的变量 engine
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:179: 错误: 找不到符号
+          VertexBuffer vertexBuffer = VertexBuffer.Builder()
+                                                  ^
+    符号:   方法 Builder()
+    位置: 类 VertexBuffer
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:194: 错误: 找不到符号
+          IndexBuffer indexBuffer = IndexBuffer.Builder()
+                                               ^
+    符号:   方法 Builder()
+    位置: 类 IndexBuffer
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:211: 错误: 找不到符号
+          Material material = Material.builder()
+                                      ^
+    符号:   方法 builder()
+    位置: 类 Material
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:221: 错误: 找不到符号
+          renderableManager.setRenderable(renderableInstance, 0, RenderableManager.PrimitiveType.TRIANGLES, 
+                           ^
+    符号:   方法 setRenderable(int,int,PrimitiveType,VertexBuffer,IndexBuffer,int,int)
+    位置: 类型为RenderableManager的变量 renderableManager
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:223: 错误: 找不到符号
+          renderableManager.setMaterialInstance(renderableInstance, 0, material.createInstance());
+                           ^
+    符号:   方法 setMaterialInstance(int,int,MaterialInstance)
+    位置: 类型为RenderableManager的变量 renderableManager
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:224: 错误: 找不到符号
+          renderableManager.setReceivesShadows(renderableInstance, true);
+                           ^
+    符号:   方法 setReceivesShadows(int,boolean)
+    位置: 类型为RenderableManager的变量 renderableManager
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:225: 错误: 找不到符号
+          renderableManager.setCastsShadows(renderableInstance, true);
+                           ^
+    符号:   方法 setCastsShadows(int,boolean)
+    位置: 类型为RenderableManager的变量 renderableManager
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:244: 错误: 找不到符号
+          engine.frame();
+                ^
+    符号:   方法 frame()
+    位置: 类型为Engine的变量 engine
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:182: 错误: 找不到符号
+                  .attribute(VertexBuffer.VertexAttribute.POSITION, 0, VertexBuffer.VertexBufferType.FLOAT3, 0, 12)
+                                                                                   ^
+    符号:   变量 VertexBufferType
+    位置: 类 VertexBuffer
+  D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:196: 错误: 找不到符号
+                  .bufferType(IndexBuffer.IndexType.USHORT)
+                                         ^
+    符号:   变量 IndexType
+    位置: 类 IndexBuffer
+  注: 某些消息已经过简化; 请使用 -Xdiags:verbose 重新编译以获得完整输出
+  27 个错误
+
+* Try:
+> Check your code and dependencies to fix the compilation error(s)
+> Run with --scan to get full insights.
+
+* Exception is:
+org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:compileRegularDebugJavaWithJavac'.
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.lambda$executeIfValid$1(ExecuteActionsTaskExecuter.java:130)
+	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:293)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:128)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:116)
+	at org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.java:51)
+	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+	at org.gradle.execution.plan.LocalTaskNodeExecutor.execute(LocalTaskNodeExecutor.java:42)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:331)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:318)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.lambda$execute$0(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
+Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Compilation failed; see the compiler output below.
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:241: 错误: 对于setTransform(long,float[]), 找不到合适的方法
+        transformManager.setTransform(transformInstance, rotationMatrix);
+                        ^
+    方法 TransformManager.setTransform(int,float[])不适用
+      (参数不匹配; 从long转换到int可能会有损失)
+    方法 TransformManager.setTransform(int,double[])不适用
+      (参数不匹配; 从long转换到int可能会有损失)
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:119: 错误: 二元运算符 '!=' 的操作数类型错误
+        if (renderable != null) {
+                       ^
+  第一个类型:  long
+  第二个类型: <空值>
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:124: 错误: 二元运算符 '!=' 的操作数类型错误
+        if (cameraEntity != null) {
+                         ^
+  第一个类型:  long
+  第二个类型: <空值>
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:73: 错误: 不兼容的类型: 从long转换到int可能会有损失
+        camera = engine.createCamera(cameraEntity);
+                                     ^
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:82: 错误: 不兼容的类型: 从long转换到int可能会有损失
+        int light = lightManager.getInstance(lightEntity);
+                                             ^
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:86: 错误: 不兼容的类型: 从long转换到int可能会有损失
+        scene.addEntity(lightEntity);
+                        ^
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:93: 错误: 不兼容的类型: Surface无法转换为RenderTarget
+        view.setRenderTarget(surface);
+                             ^
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:95: 错误: 不兼容的类型: long无法转换为Camera
+        view.setCamera(cameraEntity);
+                       ^
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:120: 错误: 不兼容的类型: 从long转换到int可能会有损失
+            scene.removeEntity(renderable);
+                               ^
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:121: 错误: 不兼容的类型: 从long转换到int可能会有损失
+            engine.destroyEntity(renderable);
+                                 ^
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:125: 错误: 不兼容的类型: 从long转换到int可能会有损失
+            engine.destroyEntity(cameraEntity);
+                                 ^
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:218: 错误: 不兼容的类型: 从long转换到int可能会有损失
+        int renderableInstance = renderableManager.getInstance(renderable);
+                                                               ^
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:228: 错误: 不兼容的类型: 从long转换到int可能会有损失
+        scene.addEntity(renderable);
+                        ^
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:232: 错误: 不兼容的类型: 从long转换到int可能会有损失
+        transformInstance = transformManager.getInstance(renderable);
+                                                         ^
+注: 某些输入文件使用了未经检查或不安全的操作。
+注: 有关详细信息, 请使用 -Xlint:unchecked 重新编译。
+注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+注: 某些输入文件使用或覆盖了已过时的 API。
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\Experiment.java:299: 错误: 找不到符号
+                    filamentView.render();
+                                ^
+  符号:   方法 render()
+  位置: 类型为FilamentView的变量 filamentView
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\Experiment.java:328: 错误: 找不到符号
+            filamentView.release();
+                        ^
+  符号:   方法 release()
+  位置: 类型为FilamentView的变量 filamentView
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:80: 错误: 找不到符号
+        engine.createDirectionalLight(lightEntity);
+              ^
+  符号:   方法 createDirectionalLight(long)
+  位置: 类型为Engine的变量 engine
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:179: 错误: 找不到符号
+        VertexBuffer vertexBuffer = VertexBuffer.Builder()
+                                                ^
+  符号:   方法 Builder()
+  位置: 类 VertexBuffer
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:194: 错误: 找不到符号
+        IndexBuffer indexBuffer = IndexBuffer.Builder()
+                                             ^
+  符号:   方法 Builder()
+  位置: 类 IndexBuffer
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:211: 错误: 找不到符号
+        Material material = Material.builder()
+                                    ^
+  符号:   方法 builder()
+  位置: 类 Material
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:221: 错误: 找不到符号
+        renderableManager.setRenderable(renderableInstance, 0, RenderableManager.PrimitiveType.TRIANGLES, 
+                         ^
+  符号:   方法 setRenderable(int,int,PrimitiveType,VertexBuffer,IndexBuffer,int,int)
+  位置: 类型为RenderableManager的变量 renderableManager
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:223: 错误: 找不到符号
+        renderableManager.setMaterialInstance(renderableInstance, 0, material.createInstance());
+                         ^
+  符号:   方法 setMaterialInstance(int,int,MaterialInstance)
+  位置: 类型为RenderableManager的变量 renderableManager
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:224: 错误: 找不到符号
+        renderableManager.setReceivesShadows(renderableInstance, true);
+                         ^
+  符号:   方法 setReceivesShadows(int,boolean)
+  位置: 类型为RenderableManager的变量 renderableManager
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:225: 错误: 找不到符号
+        renderableManager.setCastsShadows(renderableInstance, true);
+                         ^
+  符号:   方法 setCastsShadows(int,boolean)
+  位置: 类型为RenderableManager的变量 renderableManager
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:244: 错误: 找不到符号
+        engine.frame();
+              ^
+  符号:   方法 frame()
+  位置: 类型为Engine的变量 engine
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:182: 错误: 找不到符号
+                .attribute(VertexBuffer.VertexAttribute.POSITION, 0, VertexBuffer.VertexBufferType.FLOAT3, 0, 12)
+                                                                                 ^
+  符号:   变量 VertexBufferType
+  位置: 类 VertexBuffer
+D:\AndroidStudioProjects\phyphox-android\app\src\main\java\de\rwth_aachen\phyphox\FilamentView.java:196: 错误: 找不到符号
+                .bufferType(IndexBuffer.IndexType.USHORT)
+                                       ^
+  符号:   变量 IndexType
+  位置: 类 IndexBuffer
+注: 某些消息已经过简化; 请使用 -Xdiags:verbose 重新编译以获得完整输出
+27 个错误
+	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:84)
+	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:46)
+	at org.gradle.api.internal.tasks.compile.NormalizingJavaCompiler.delegateAndHandleErrors(NormalizingJavaCompiler.java:98)
+	at org.gradle.api.internal.tasks.compile.NormalizingJavaCompiler.execute(NormalizingJavaCompiler.java:52)
+	at org.gradle.api.internal.tasks.compile.NormalizingJavaCompiler.execute(NormalizingJavaCompiler.java:38)
+	at org.gradle.api.internal.tasks.compile.AnnotationProcessorDiscoveringCompiler.execute(AnnotationProcessorDiscoveringCompiler.java:52)
+	at org.gradle.api.internal.tasks.compile.AnnotationProcessorDiscoveringCompiler.execute(AnnotationProcessorDiscoveringCompiler.java:38)
+	at org.gradle.api.internal.tasks.compile.ModuleApplicationNameWritingCompiler.execute(ModuleApplicationNameWritingCompiler.java:46)
+	at org.gradle.api.internal.tasks.compile.ModuleApplicationNameWritingCompiler.execute(ModuleApplicationNameWritingCompiler.java:36)
+	at org.gradle.jvm.toolchain.internal.DefaultToolchainJavaCompiler.execute(DefaultToolchainJavaCompiler.java:57)
+	at org.gradle.api.tasks.compile.JavaCompile.lambda$createToolchainCompiler$3(JavaCompile.java:205)
+	at org.gradle.api.internal.tasks.compile.CleaningJavaCompiler.execute(CleaningJavaCompiler.java:53)
+	at org.gradle.api.internal.tasks.compile.incremental.IncrementalCompilerFactory.lambda$createRebuildAllCompiler$0(IncrementalCompilerFactory.java:52)
+	at org.gradle.api.internal.tasks.compile.incremental.SelectiveCompiler.execute(SelectiveCompiler.java:70)
+	at org.gradle.api.internal.tasks.compile.incremental.SelectiveCompiler.execute(SelectiveCompiler.java:44)
+	at org.gradle.api.internal.tasks.compile.incremental.IncrementalResultStoringCompiler.execute(IncrementalResultStoringCompiler.java:66)
+	at org.gradle.api.internal.tasks.compile.incremental.IncrementalResultStoringCompiler.execute(IncrementalResultStoringCompiler.java:52)
+	at org.gradle.api.internal.tasks.compile.CompileJavaBuildOperationReportingCompiler$1.call(CompileJavaBuildOperationReportingCompiler.java:64)
+	at org.gradle.api.internal.tasks.compile.CompileJavaBuildOperationReportingCompiler$1.call(CompileJavaBuildOperationReportingCompiler.java:48)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.api.internal.tasks.compile.CompileJavaBuildOperationReportingCompiler.execute(CompileJavaBuildOperationReportingCompiler.java:48)
+	at org.gradle.api.tasks.compile.JavaCompile.performCompilation(JavaCompile.java:223)
+	at org.gradle.api.tasks.compile.JavaCompile.performIncrementalCompilation(JavaCompile.java:164)
+	at org.gradle.api.tasks.compile.JavaCompile.compile(JavaCompile.java:149)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+	at org.gradle.internal.reflect.JavaMethod.invoke(JavaMethod.java:125)
+	at org.gradle.api.internal.project.taskfactory.IncrementalTaskAction.doExecute(IncrementalTaskAction.java:45)
+	at org.gradle.api.internal.project.taskfactory.StandardTaskAction.execute(StandardTaskAction.java:51)
+	at org.gradle.api.internal.project.taskfactory.IncrementalTaskAction.execute(IncrementalTaskAction.java:26)
+	at org.gradle.api.internal.project.taskfactory.StandardTaskAction.execute(StandardTaskAction.java:29)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$3.run(TaskExecution.java:244)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:29)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:26)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:47)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeAction(TaskExecution.java:229)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeActions(TaskExecution.java:212)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeWithPreviousOutputFiles(TaskExecution.java:195)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.execute(TaskExecution.java:162)
+	at org.gradle.internal.execution.steps.ExecuteStep.executeInternal(ExecuteStep.java:105)
+	at org.gradle.internal.execution.steps.ExecuteStep.access$000(ExecuteStep.java:44)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:59)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:56)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:56)
+	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:44)
+	at org.gradle.internal.execution.steps.CancelExecutionStep.execute(CancelExecutionStep.java:42)
+	at org.gradle.internal.execution.steps.TimeoutStep.executeWithoutTimeout(TimeoutStep.java:75)
+	at org.gradle.internal.execution.steps.TimeoutStep.execute(TimeoutStep.java:55)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:50)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:28)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.execute(RemovePreviousOutputsStep.java:67)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.execute(RemovePreviousOutputsStep.java:37)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:61)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:26)
+	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:69)
+	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:46)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.execute(ResolveInputChangesStep.java:40)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.execute(ResolveInputChangesStep.java:29)
+	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithoutCache(BuildCacheStep.java:189)
+	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$execute$1(BuildCacheStep.java:75)
+	at org.gradle.internal.Either$Right.fold(Either.java:175)
+	at org.gradle.internal.execution.caching.CachingState.fold(CachingState.java:62)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:73)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:48)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.execute(StoreExecutionStateStep.java:46)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.execute(StoreExecutionStateStep.java:35)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.executeBecause(SkipUpToDateStep.java:75)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.lambda$execute$2(SkipUpToDateStep.java:53)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:53)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:35)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:37)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:27)
+	at org.gradle.internal.execution.steps.ResolveIncrementalCachingStateStep.executeDelegate(ResolveIncrementalCachingStateStep.java:49)
+	at org.gradle.internal.execution.steps.ResolveIncrementalCachingStateStep.executeDelegate(ResolveIncrementalCachingStateStep.java:27)
+	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:71)
+	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:39)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.execute(ResolveChangesStep.java:65)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.execute(ResolveChangesStep.java:36)
+	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:107)
+	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:56)
+	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:64)
+	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:43)
+	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.executeWithNonEmptySources(AbstractSkipEmptyWorkStep.java:125)
+	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.execute(AbstractSkipEmptyWorkStep.java:61)
+	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.execute(AbstractSkipEmptyWorkStep.java:36)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsStartedStep.execute(MarkSnapshottingInputsStartedStep.java:38)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.execute(LoadPreviousExecutionStateStep.java:36)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.execute(LoadPreviousExecutionStateStep.java:23)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.execute(HandleStaleOutputsStep.java:75)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.execute(HandleStaleOutputsStep.java:41)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.lambda$execute$0(AssignMutableWorkspaceStep.java:35)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$4.withWorkspace(TaskExecution.java:289)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.execute(AssignMutableWorkspaceStep.java:31)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.execute(AssignMutableWorkspaceStep.java:22)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:40)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:23)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.lambda$execute$2(ExecuteWorkBuildOperationFiringStep.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:39)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:46)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:34)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:48)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:35)
+	at org.gradle.internal.execution.impl.DefaultExecutionEngine$1.execute(DefaultExecutionEngine.java:61)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:127)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:116)
+	at org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.java:51)
+	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+	at org.gradle.execution.plan.LocalTaskNodeExecutor.execute(LocalTaskNodeExecutor.java:42)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:331)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:318)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.lambda$execute$0(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
+
+
+BUILD FAILED in 4s
+32 actionable tasks: 4 executed, 28 up-to-date

@@ -8,7 +8,7 @@ import static de.rwth_aachen.phyphox.ExperimentList.model.Const.phyphoxCatHintRe
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.bluetooth.BluetoothDevice;
+// Simplified: removed BluetoothDevice import
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ContentResolver;
@@ -24,7 +24,7 @@ import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
-import android.hardware.camera2.CameraCharacteristics;
+// Simplified: removed CameraCharacteristics import
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -55,6 +55,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
@@ -85,18 +86,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.CRC32;
 
-import de.rwth_aachen.phyphox.Bluetooth.BluetoothExperimentLoader;
-import de.rwth_aachen.phyphox.Bluetooth.BluetoothScanDialog;
+// Simplified: removed Bluetooth, camera imports
 import de.rwth_aachen.phyphox.Experiment;
 import de.rwth_aachen.phyphox.ExperimentList.datasource.AssetExperimentLoader;
-import de.rwth_aachen.phyphox.ExperimentList.handler.BluetoothScanner;
 import de.rwth_aachen.phyphox.ExperimentList.handler.CopyIntentHandler;
 import de.rwth_aachen.phyphox.ExperimentList.handler.ZipIntentHandler;
 import de.rwth_aachen.phyphox.ExperimentList.model.ExperimentListEnvironment;
 import de.rwth_aachen.phyphox.ExperimentList.model.ExperimentLoadInfoData;
 import de.rwth_aachen.phyphox.ExperimentList.datasource.ExperimentRepository;
 import de.rwth_aachen.phyphox.ExperimentList.model.ExperimentShortInfo;
-import de.rwth_aachen.phyphox.ExperimentList.handler.SimpleExperimentCreator;
+// Simplified: removed SimpleExperimentCreator import
 import de.rwth_aachen.phyphox.Helper.Helper;
 import de.rwth_aachen.phyphox.Helper.ReportingScrollView;
 import de.rwth_aachen.phyphox.Helper.WindowInsetHelper;
@@ -105,8 +104,7 @@ import de.rwth_aachen.phyphox.R;
 import de.rwth_aachen.phyphox.SensorInput;
 import de.rwth_aachen.phyphox.SettingsActivity.SettingsActivity;
 import de.rwth_aachen.phyphox.SettingsActivity.SettingsFragment;
-import de.rwth_aachen.phyphox.camera.depth.DepthInput;
-import de.rwth_aachen.phyphox.camera.helper.CameraHelper;
+// Simplified: removed camera imports
 
 public class ExperimentListActivity extends AppCompatActivity {
 
@@ -115,20 +113,19 @@ public class ExperimentListActivity extends AppCompatActivity {
 
     ProgressDialog progress = null;
 
-    BluetoothExperimentLoader bluetoothExperimentLoader = null;
+    // Simplified: removed bluetoothExperimentLoader
     long currentQRcrc32 = -1;
     int currentQRsize = -1;
     byte[][] currentQRdataPackets = null;
 
-    boolean newExperimentDialogOpen = false;
+    // Simplified: removed new experiment dialog fields
 
     PopupWindow popupWindow = null;
 
     private ExperimentRepository experimentRepository;
 
     ImageView creditsV;
-    FloatingActionButton newExperimentButton, newExperimentBluetooth, newExperimentQR, newExperimentSimple;
-    TextView newExperimentBluetoothLabel, newExperimentSimpleLabel, newExperimentQRLabel;
+    // Simplified: removed new experiment button fields
     ReportingScrollView sv;
     View backgroundDimmer;
 
@@ -144,12 +141,7 @@ public class ExperimentListActivity extends AppCompatActivity {
         //On Android 12 this does not hurt, but Android 12 shows its own splash method (defined with
         //specific attributes in the theme), so the classic splash screen is not shown anyways
         //before setTheme is called and we see the normal theme right away.
-        setTheme(R.style.Theme_Phyphox_DayNight);
-
-        String themePreference = PreferenceManager
-                .getDefaultSharedPreferences(this)
-                .getString(getString(R.string.setting_dark_mode_key), SettingsFragment.DARK_MODE_ON);
-        SettingsFragment.setApplicationTheme(themePreference);
+        setTheme(R.style.Theme_Phyphox);
 
         //Basics. Call super-constructor and inflate the layout.
         super.onCreate(savedInstanceState);
@@ -157,24 +149,20 @@ public class ExperimentListActivity extends AppCompatActivity {
 
         res = getResources(); //Get Resource reference for easy access.
 
-        creditsV = findViewById(R.id.credits);
-        newExperimentButton = findViewById(R.id.newExperiment);
-
-        newExperimentSimple = findViewById(R.id.newExperimentSimple);
-        newExperimentSimpleLabel = findViewById(R.id.newExperimentSimpleLabel);
-        newExperimentBluetooth = findViewById(R.id.newExperimentBluetooth);
-        newExperimentQR = findViewById(R.id.newExperimentQR);
-        newExperimentBluetoothLabel = findViewById(R.id.newExperimentBluetoothLabel);
-        newExperimentQRLabel = findViewById(R.id.newExperimentQRLabel);
-        backgroundDimmer = findViewById(R.id.experimentListDimmer);
-
-        if (!displayDoNotDamageYourPhone()) { //Show the do-not-damage-your-phone-warning
-            showSupportHintIfRequired();
+        Toolbar toolbar = findViewById(R.id.expListHeader);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
+        creditsV = findViewById(R.id.credits);
+        // Simplified: removed new experiment button initialization
+        backgroundDimmer = findViewById(R.id.experimentListDimmer);
+
+        showSupportHintIfRequired();
+
         WindowInsetHelper.setInsets(findViewById(R.id.experimentList), WindowInsetHelper.ApplyTo.PADDING, WindowInsetHelper.ApplyTo.IGNORE, WindowInsetHelper.ApplyTo.PADDING, WindowInsetHelper.ApplyTo.PADDING);
-        WindowInsetHelper.setInsets(findViewById(R.id.expListHeader), WindowInsetHelper.ApplyTo.PADDING, WindowInsetHelper.ApplyTo.PADDING, WindowInsetHelper.ApplyTo.PADDING, WindowInsetHelper.ApplyTo.IGNORE);
-        WindowInsetHelper.setInsets(findViewById(R.id.newExperiment), WindowInsetHelper.ApplyTo.IGNORE, WindowInsetHelper.ApplyTo.IGNORE, WindowInsetHelper.ApplyTo.MARGIN, WindowInsetHelper.ApplyTo.MARGIN);
+        // Simplified: removed newExperiment insets
 
         setUpOnClickListener();
 
@@ -217,58 +205,7 @@ public class ExperimentListActivity extends AppCompatActivity {
 
         creditsV.setOnClickListener(ocl);
 
-        Button.OnClickListener neocl = v -> {
-            if (newExperimentDialogOpen)
-                hideNewExperimentDialog();
-            else
-                showNewExperimentDialog();
-
-        };
-
-        View experimentListDimmer = findViewById(R.id.experimentListDimmer);
-        newExperimentButton.setOnClickListener(neocl);
-        experimentListDimmer.setOnClickListener(neocl);
-
-        Button.OnClickListener neoclSimple = v -> {
-            hideNewExperimentDialog();
-            openSimpleExperimentConfigurationDialog(this);
-        };
-
-        newExperimentSimple.setOnClickListener(neoclSimple);
-        newExperimentSimpleLabel.setOnClickListener(neoclSimple);
-
-        Button.OnClickListener neoclBluetooth = v -> {
-            hideNewExperimentDialog();
-
-            Set<String> bluetoothNameKeySet = experimentRepository.getBluetoothDeviceNameList().keySet();
-            Set<UUID> bluetoothUUIDKeySet = experimentRepository.getBluetoothDeviceUUIDList().keySet();
-
-            new BluetoothScanner(this, bluetoothNameKeySet, bluetoothUUIDKeySet, new BluetoothScanner.BluetoothScanListener() {
-                @Override
-                public void onBluetoothDeviceFound(BluetoothScanDialog.BluetoothDeviceInfo result) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                        openBluetoothExperiments(result.device, result.uuids, result.phyphoxService);
-                    }
-                }
-
-                @Override
-                public void onBluetoothScanError(String msg, Boolean isError, Boolean isFatal) {
-                    showBluetoothScanError(res.getString(R.string.bt_android_version), true, true);
-
-                }
-            }).execute();
-        };
-
-        newExperimentBluetooth.setOnClickListener(neoclBluetooth);
-        newExperimentBluetoothLabel.setOnClickListener(neoclBluetooth);
-
-        Button.OnClickListener neoclQR = v -> {
-            hideNewExperimentDialog();
-            scanQRCode();
-        };
-
-        newExperimentQR.setOnClickListener(neoclQR);
-        newExperimentQRLabel.setOnClickListener(neoclQR);
+        // Simplified: removed new experiment dialog and button click handlers
 
         sv = findViewById(R.id.experimentScroller);
         sv.setOnScrollChangedListener((scrollView, x, y, oldx, oldy) -> {
@@ -285,30 +222,10 @@ public class ExperimentListActivity extends AppCompatActivity {
     }
 
     private void showPopupMenu(View v) {
-        Context wrapper = new ContextThemeWrapper(ExperimentListActivity.this, R.style.Theme_Phyphox_DayNight);
+        Context wrapper = new ContextThemeWrapper(ExperimentListActivity.this, R.style.Theme_Phyphox);
         PopupMenu popup = new PopupMenu(wrapper, v);
         popup.setOnMenuItemClickListener(item -> {
-            if (item.getItemId() == R.id.action_privacy) {
-                openLink(res.getString(R.string.privacyPolicyURL));
-                return true;
-            }
-            else if (item.getItemId() == R.id.action_credits) {
-                openCreditDialog();
-                return true;
-            }
-            else if (item.getItemId() == R.id.action_helpExperiments) {
-                openLink(res.getString(R.string.experimentsPhyphoxOrgURL));
-                return true;
-            }
-            else if (item.getItemId() == R.id.action_helpFAQ) {
-                openLink(res.getString(R.string.faqPhyphoxOrgURL));
-                return true;
-            }
-            else if (item.getItemId() == R.id.action_helpRemote) {
-                openLink(res.getString(R.string.remotePhyphoxOrgURL));
-                return true;
-            }
-            else if (item.getItemId() == R.id.action_settings) {
+            if (item.getItemId() == R.id.action_settings) {
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 return true;
@@ -323,14 +240,6 @@ public class ExperimentListActivity extends AppCompatActivity {
         });
         popup.inflate(R.menu.menu_help);
         popup.show();
-    }
-
-    private void openLink(String URLString) {
-        Uri uri = Uri.parse(URLString);
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(intent);
-        }
     }
 
     private void openDeviceInfoDialog() {
@@ -487,44 +396,15 @@ public class ExperimentListActivity extends AppCompatActivity {
         }
         sb.append("<br /><br />");
 
-        sb.append("<b>Cameras</b><br /><br />");
-        sb.append("<b>Depth sensors</b><br />");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            sb.append("- Depth sensors front: ");
-            int depthFront = DepthInput.countCameras(CameraCharacteristics.LENS_FACING_FRONT);
-            sb.append(depthFront);
-            sb.append("<br />");
-            sb.append("- Max resolution front: ");
-            sb.append(depthFront > 0 ? DepthInput.getMaxResolution(CameraCharacteristics.LENS_FACING_FRONT) : "-");
-            sb.append("<br />");
-            sb.append("- Max frame rate front: ");
-            sb.append(depthFront > 0 ? DepthInput.getMaxRate(CameraCharacteristics.LENS_FACING_FRONT) : "-");
-            sb.append("<br />");
-            sb.append("- Depth sensors back: ");
-            int depthBack = DepthInput.countCameras(CameraCharacteristics.LENS_FACING_FRONT);
-            sb.append(depthBack);
-            sb.append("<br />");
-            sb.append("- Max resolution back: ");
-            sb.append(depthBack > 0 ? DepthInput.getMaxResolution(CameraCharacteristics.LENS_FACING_BACK) : "-");
-            sb.append("<br />");
-            sb.append("- Max frame rate back: ");
-            sb.append(depthBack > 0 ? DepthInput.getMaxRate(CameraCharacteristics.LENS_FACING_BACK) : "-");
-            sb.append("<br />");
-        } else {
-            sb.append("API < 23");
-        }
+        // Simplified: Camera and depth sensor info removed
+        sb.append("<b>Cameras</b><br />");
+        sb.append("Camera features not available in simplified version");
         sb.append("<br /><br />");
 
-        sb.append("<b>Camera 2 API</b><br />");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            sb.append(CameraHelper.getCamera2FormattedCaps(false));
-        } else {
-            sb.append("API < 21");
-        }
         sb.append("</font>");
 
         final Spanned text = Html.fromHtml(sb.toString());
-        ContextThemeWrapper ctw = new ContextThemeWrapper(ExperimentListActivity.this, R.style.Theme_Phyphox_DayNight);
+        ContextThemeWrapper ctw = new ContextThemeWrapper(ExperimentListActivity.this, R.style.Theme_Phyphox);
         AlertDialog.Builder builder = new AlertDialog.Builder(ctw);
         builder.setMessage(text)
                 .setTitle(R.string.deviceInfo)
@@ -546,56 +426,6 @@ public class ExperimentListActivity extends AppCompatActivity {
                 });
         AlertDialog dialog = builder.create();
         dialog.show();
-    }
-
-    private void openCreditDialog() {
-        //Create the credits as an AlertDialog
-        ContextThemeWrapper ctw = new ContextThemeWrapper(ExperimentListActivity.this, R.style.Theme_Phyphox);
-        AlertDialog.Builder credits = new AlertDialog.Builder(ctw);
-        LayoutInflater creditsInflater = (LayoutInflater) ctw.getSystemService(LAYOUT_INFLATER_SERVICE);
-        View creditLayout = creditsInflater.inflate(R.layout.credits, null);
-
-        //Set the credit texts, which require HTML markup
-        TextView tv = (TextView) creditLayout.findViewById(R.id.creditNames);
-
-        SpannableStringBuilder creditsNamesSpannable = new SpannableStringBuilder();
-        boolean first = true;
-        for (String line : res.getString(R.string.creditsNames).split("\\n")) {
-            if (first)
-                first = false;
-            else
-                creditsNamesSpannable.append("\n");
-            creditsNamesSpannable.append(line.trim());
-        }
-        Matcher matcher = Pattern.compile("^.*:$", Pattern.MULTILINE).matcher(creditsNamesSpannable);
-        while (matcher.find()) {
-            creditsNamesSpannable.setSpan(new StyleSpan(Typeface.BOLD), matcher.start(), matcher.end(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-        }
-        tv.setText(creditsNamesSpannable);
-
-        //The following texts are not translateable. Get them from the basic English version.
-        Configuration conf = res.getConfiguration();
-        conf = new Configuration(conf);
-        conf.setLocale(Locale.ENGLISH);
-        Resources localizedRes = getBaseContext().createConfigurationContext(conf).getResources();
-
-        TextView tvA = (TextView) creditLayout.findViewById(R.id.creditsApache);
-        tvA.setText(Html.fromHtml(localizedRes.getString(R.string.creditsApache)));
-        TextView tvB = (TextView) creditLayout.findViewById(R.id.creditsZxing);
-        tvB.setText(Html.fromHtml(localizedRes.getString(R.string.creditsZxing)));
-        TextView tvC = (TextView) creditLayout.findViewById(R.id.creditsPahoMQTT);
-        tvC.setText(Html.fromHtml(localizedRes.getString(R.string.creditsPahoMQTT)));
-
-        //Finish alertDialog builder
-        credits.setView(creditLayout);
-        credits.setPositiveButton(res.getText(R.string.close), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                //Nothing to do. Just close the thing.
-            }
-        });
-
-        //Present the dialog
-        credits.show();
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -664,7 +494,8 @@ public class ExperimentListActivity extends AppCompatActivity {
         Toast.makeText(this, error, Toast.LENGTH_LONG).show();
     }
 
-    public void zipReady(String result, BluetoothDevice preselectedDevice) {
+    // Simplified: removed BluetoothDevice parameter
+    public void zipReady(String result) {
         if (progress != null)
             progress.dismiss();
         if (result.isEmpty()) {
@@ -677,8 +508,7 @@ public class ExperimentListActivity extends AppCompatActivity {
                 //Create an intent for this file
                 Intent intent = new Intent(this, Experiment.class);
                 intent.setData(Uri.fromFile(files.iterator().next()));
-                if (preselectedDevice != null)
-                    intent.putExtra(EXPERIMENT_PRESELECTED_BLUETOOTH_ADDRESS, preselectedDevice.getAddress());
+                // Simplified: removed preselectedDevice handling
                 intent.putExtra(EXPERIMENT_ISTEMP, "temp_zip");
                 intent.setAction(Intent.ACTION_VIEW);
 
@@ -732,84 +562,10 @@ public class ExperimentListActivity extends AppCompatActivity {
         }
     }
 
+    // Simplified: Bluetooth experiment loading not supported
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    public void loadExperimentFromBluetoothDevice(final BluetoothDevice device) {
-        final ExperimentListActivity parent = this;
-        if (bluetoothExperimentLoader == null) {
-            bluetoothExperimentLoader = new BluetoothExperimentLoader(getBaseContext(), new BluetoothExperimentLoader.BluetoothExperimentLoaderCallback() {
-                @Override
-                public void updateProgress(int transferred, int total) {
-
-                    parent.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            if (total > 0) {
-                                if (progress.isIndeterminate()) {
-                                    progress.dismiss();
-                                    progress = new ProgressDialog(parent);
-                                    progress.setTitle(res.getString(R.string.loadingTitle));
-                                    progress.setMessage(res.getString(R.string.loadingText));
-                                    progress.setIndeterminate(false);
-                                    progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                                    progress.setCancelable(true);
-                                    progress.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                                        @Override
-                                        public void onCancel(DialogInterface dialogInterface) {
-                                            if (bluetoothExperimentLoader != null)
-                                                bluetoothExperimentLoader.cancel();
-                                        }
-                                    });
-                                    progress.setProgress(transferred);
-                                    progress.setMax(total);
-                                    progress.show();
-                                } else {
-                                    progress.setProgress(transferred);
-                                }
-                            }
-                        }
-                    });
-                }
-
-                @Override
-                public void dismiss() {
-                    parent.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            progress.dismiss();
-                        }
-                    });
-                }
-
-                @Override
-                public void error(String msg) {
-                    dismiss();
-                    showBluetoothExperimentReadError(msg, device);
-                }
-
-                @Override
-                public void success(Uri experimentUri, boolean isZip) {
-                    dismiss();
-                    Intent intent = new Intent(parent, Experiment.class);
-                    intent.setData(experimentUri);
-                    intent.setAction(Intent.ACTION_VIEW);
-                    if (isZip) {
-                        new ZipIntentHandler(intent, parent, device).execute();
-                    } else {
-                        intent.putExtra(EXPERIMENT_PRESELECTED_BLUETOOTH_ADDRESS, device.getAddress());
-                        startActivity(intent);
-                    }
-                }
-            });
-        }
-        progress = ProgressDialog.show(this, res.getString(R.string.loadingTitle), res.getString(R.string.loadingText), true, true, new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialogInterface) {
-                if (bluetoothExperimentLoader != null)
-                    bluetoothExperimentLoader.cancel();
-            }
-        });
-        bluetoothExperimentLoader.loadExperimentFromBluetoothDevice(device);
+    public void loadExperimentFromBluetoothDevice(final Object device) {
+        Toast.makeText(this, "Bluetooth experiments not supported in simplified version", Toast.LENGTH_SHORT).show();
     }
 
     public void handleIntent(Intent intent) {
@@ -865,58 +621,7 @@ public class ExperimentListActivity extends AppCompatActivity {
         }
     }
 
-    protected void showNewExperimentDialog() {
-        newExperimentDialogOpen = true;
-
-        Animation rotate45In = AnimationUtils.loadAnimation(getBaseContext(), R.anim.experiment_list_fab_rotate45);
-        Animation fabIn = AnimationUtils.loadAnimation(getBaseContext(), R.anim.experiment_list_fab_in);
-        Animation labelIn = AnimationUtils.loadAnimation(getBaseContext(), R.anim.experiment_list_label_in);
-        Animation fadeDark = AnimationUtils.loadAnimation(getBaseContext(), R.anim.experiment_list_fade_dark);
-
-        newExperimentButton.startAnimation(rotate45In);
-        newExperimentSimple.startAnimation(fabIn);
-        newExperimentSimpleLabel.startAnimation(labelIn);
-        newExperimentBluetooth.startAnimation(fabIn);
-        newExperimentBluetoothLabel.startAnimation(labelIn);
-        newExperimentQR.startAnimation(fabIn);
-        newExperimentQRLabel.startAnimation(labelIn);
-        backgroundDimmer.startAnimation(fadeDark);
-
-        newExperimentSimple.setClickable(true);
-        newExperimentSimpleLabel.setClickable(true);
-        newExperimentBluetooth.setClickable(true);
-        newExperimentBluetoothLabel.setClickable(true);
-        newExperimentQR.setClickable(true);
-        newExperimentQRLabel.setClickable(true);
-        backgroundDimmer.setClickable(true);
-    }
-
-    protected void hideNewExperimentDialog() {
-        newExperimentDialogOpen = false;
-
-        Animation rotate0In = AnimationUtils.loadAnimation(getBaseContext(), R.anim.experiment_list_fab_rotate0);
-        Animation fabOut = AnimationUtils.loadAnimation(getBaseContext(), R.anim.experiment_list_fab_out);
-        Animation labelOut = AnimationUtils.loadAnimation(getBaseContext(), R.anim.experiment_list_label_out);
-        Animation fadeTransparent = AnimationUtils.loadAnimation(getBaseContext(), R.anim.experiment_list_fade_transparent);
-
-        newExperimentSimple.setClickable(false);
-        newExperimentSimpleLabel.setClickable(false);
-        newExperimentBluetooth.setClickable(false);
-        newExperimentBluetoothLabel.setClickable(false);
-        newExperimentQR.setClickable(false);
-        newExperimentQRLabel.setClickable(false);
-        backgroundDimmer.setClickable(false);
-
-        newExperimentButton.startAnimation(rotate0In);
-        newExperimentSimple.startAnimation(fabOut);
-        newExperimentSimpleLabel.startAnimation(labelOut);
-        newExperimentBluetooth.startAnimation(fabOut);
-        newExperimentBluetoothLabel.startAnimation(labelOut);
-        newExperimentQR.startAnimation(fabOut);
-        newExperimentQRLabel.startAnimation(labelOut);
-        backgroundDimmer.startAnimation(fadeTransparent);
-
-    }
+    // Simplified: removed new experiment dialog methods
 
     protected void scanQRCode() {
         IntentIntegrator qrScan = new IntentIntegrator(this);
@@ -952,28 +657,10 @@ public class ExperimentListActivity extends AppCompatActivity {
         });
     }
 
+    // Simplified: removed Bluetooth experiment error handling
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    protected void showBluetoothExperimentReadError(String msg, final BluetoothDevice device) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(msg)
-                .setTitle(R.string.newExperimentBTReadErrorTitle)
-                .setPositiveButton(R.string.tryagain, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        loadExperimentFromBluetoothDevice(device);
-                    }
-                })
-                .setNegativeButton(res.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
-                    }
-                });
-        this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
-        });
+    protected void showBluetoothExperimentReadError(String msg, final Object device) {
+        // Not supported in simplified version
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -1088,152 +775,20 @@ public class ExperimentListActivity extends AppCompatActivity {
         }
     }
 
+    // Simplified: Bluetooth experiments not supported
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    @SuppressLint("MissingPermission")
-    //TODO: The permission is actually checked when entering the entire BLE dialog and I do not see how we could reach this part of the code if it failed. However, I cannot rule out some other mechanism of revoking permissions during an app switch or from the notifications bar (?), so a cleaner implementation might be good idea
-    public void openBluetoothExperiments(final BluetoothDevice device, final Set<UUID> uuids, boolean phyphoxService) {
-
-        final ExperimentListActivity parent = this;
-
-        ExperimentRepository hiddenBluetoothRepository = new ExperimentRepository();
-        hiddenBluetoothRepository.loadHiddenBluetoothExperiments(this);
-
-        Set<String> experiments = new HashSet<>();
-        if (device.getName() != null) {
-            for (String name : hiddenBluetoothRepository.getBluetoothDeviceNameList().keySet()) {
-                if (device.getName().contains(name)) {
-                    Vector<String> experimentsForName = hiddenBluetoothRepository.getBluetoothDeviceNameList().get(name);
-                    if (experimentsForName != null)
-                        experiments.addAll(experimentsForName);
-                }
-            }
-        }
-
-        for (UUID uuid : uuids) {
-            Vector<String> experimentsForUUID = hiddenBluetoothRepository.getBluetoothDeviceUUIDList().get(uuid);
-            if (experimentsForUUID != null)
-                experiments.addAll(experimentsForUUID);
-        }
-        final Set<String> supportedExperiments = experiments;
-
-        if (supportedExperiments.isEmpty() && phyphoxService) {
-            //We do not have any experiments for this device, so there is no choice. Just load the experiment provided by the device.
-            loadExperimentFromBluetoothDevice(device);
-            return;
-        }
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(parent);
-        LayoutInflater inflater = (LayoutInflater) parent.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        View view = inflater.inflate(R.layout.open_multipe_dialog, null);
-        builder.setView(view);
-
-        ExperimentRepository bleRepository = new ExperimentRepository();
-
-        if (!supportedExperiments.isEmpty()) {
-            builder.setPositiveButton(R.string.open_save_all, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int id) {
-                    bleRepository.saveExperimentsToMainList(new ExperimentListEnvironment(parent));
-                    experimentRepository.loadAndShowMainExperimentList(parent);
-                    dialog.dismiss();
-                }
-
-            });
-        }
-        builder.setNegativeButton(R.string.cancel, (dialog, id) -> dialog.dismiss());
-
-        String instructions = "";
-        if (!supportedExperiments.isEmpty()) {
-            instructions += res.getString(R.string.open_bluetooth_assets);
-        }
-        if (!supportedExperiments.isEmpty() && phyphoxService)
-            instructions += "\n\n";
-        if (phyphoxService) {
-            instructions += res.getString(R.string.newExperimentBluetoothLoadFromDeviceInfo);
-            builder.setNeutralButton(R.string.newExperimentBluetoothLoadFromDevice, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int id) {
-                    loadExperimentFromBluetoothDevice(device);
-                    dialog.dismiss();
-                }
-            });
-        }
-        AlertDialog dialog = builder.create();
-
-        ((TextView) view.findViewById(R.id.open_multiple_dialog_instructions)).setText(instructions);
-
-        dialog.setTitle(parent.getResources().getString(R.string.open_bluetooth_assets_title));
-
-        AssetManager assetManager = parent.getAssets();
-        for (String file : supportedExperiments) {
-            //Load details for each experiment
-            try {
-                InputStream input = assetManager.open("experiments/" + file);
-                ExperimentLoadInfoData data = new ExperimentLoadInfoData(input, file, null, true);
-                ExperimentShortInfo shortInfo = AssetExperimentLoader.loadExperimentShortInfo(data, new ExperimentListEnvironment(parent));
-                if (shortInfo != null) {
-                    bleRepository.addExperiment(shortInfo, this);
-                }
-                input.close();
-            } catch (IOException e) {
-                Log.e("ExperimentList", "Error: Could not load experiment \"" + file + "\" from asset.");
-                Toast.makeText(parent, "Error: Could not load experiment \"" + file + "\" from asset.", Toast.LENGTH_LONG).show();
-            }
-        }
-
-        LinearLayout parentLayout = view.findViewById(R.id.open_multiple_dialog_list);
-        bleRepository.setPreselectedBluetoothAddress(device.getAddress());
-        bleRepository.addExperimentCategoriesToLinearLayout(parentLayout, this.getResources());
-
-        dialog.show();
+    public void openBluetoothExperiments(final Object device, final Set<UUID> uuids, boolean phyphoxService) {
+        Toast.makeText(this, "Bluetooth experiments not supported in simplified version", Toast.LENGTH_SHORT).show();
     }
 
     protected void showBluetoothScanError(String msg, Boolean isError, Boolean isFatal) {
-        final ExperimentListActivity parent = this;
-
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(msg)
-                .setTitle(isError ? R.string.newExperimentBluetoothErrorTitle : R.string.newExperimentBluetooth);
-        if (!isFatal) {
-            builder.setPositiveButton(isError ? R.string.tryagain : R.string.doContinue, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    //(new RunBluetoothScan()).execute();
-                    Set<String> bluetoothNameKeySet = experimentRepository.getBluetoothDeviceNameList().keySet();
-                    Set<UUID> bluetoothUUIDKeySet = experimentRepository.getBluetoothDeviceUUIDList().keySet();
-
-                    new BluetoothScanner(parent, bluetoothNameKeySet, bluetoothUUIDKeySet, new BluetoothScanner.BluetoothScanListener() {
-                        @Override
-                        public void onBluetoothDeviceFound(BluetoothScanDialog.BluetoothDeviceInfo result) {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                                openBluetoothExperiments(result.device, result.uuids, result.phyphoxService);
-                            }
-                        }
-
-                        @Override
-                        public void onBluetoothScanError(String msg, Boolean isError, Boolean isFatal) {
-                            showBluetoothScanError(res.getString(R.string.bt_android_version), true, true);
-
-                        }
-                    }).execute();
-                }
-            });
-        }
-        builder.setNegativeButton(res.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-
-            }
-        });
-        runOnUiThread(() -> {
-            AlertDialog dialog = builder.create();
-            dialog.show();
-        });
+        // Simplified: Bluetooth scan errors not handled
     }
 
     //Displays a warning message that some experiments might damage the phone
     private boolean displayDoNotDamageYourPhone() {
         //Use the app theme and create an AlertDialog-builder
-        ContextThemeWrapper ctw = new ContextThemeWrapper(this, R.style.Theme_Phyphox_DayNight);
+        ContextThemeWrapper ctw = new ContextThemeWrapper(this, R.style.Theme_Phyphox);
         AlertDialog.Builder adb = new AlertDialog.Builder(ctw);
         LayoutInflater adbInflater = (LayoutInflater) ctw.getSystemService(LAYOUT_INFLATER_SERVICE);
         View warningLayout = adbInflater.inflate(R.layout.donotshowagain, null);
@@ -1271,26 +826,7 @@ public class ExperimentListActivity extends AppCompatActivity {
 
     }
 
-    //This displays a rather complex dialog to allow users to set up a simple experiment
-    private void openSimpleExperimentConfigurationDialog(final Context c) {
-        ContextThemeWrapper ctw = new ContextThemeWrapper(this, R.style.Theme_Phyphox_DayNight);
-        AlertDialog.Builder neDialog = new AlertDialog.Builder(ctw);
-        LayoutInflater neInflater = (LayoutInflater) ctw.getSystemService(LAYOUT_INFLATER_SERVICE);
-        View neLayout = neInflater.inflate(R.layout.new_experiment, null);
-
-        neDialog.setView(neLayout);
-        neDialog.setTitle(R.string.newExperiment);
-        neDialog.setPositiveButton(res.getText(R.string.ok), (dialog, which) -> {
-            //Here we have to create the experiment definition file
-            SimpleExperimentCreator creator = new SimpleExperimentCreator(c, neLayout);
-            creator.generateAndOpenSimpleExperiment();
-        });
-        neDialog.setNegativeButton(res.getText(R.string.cancel), (dialog, which) -> {
-            //If the user aborts the dialog, we don't have to do anything
-        });
-
-        neDialog.show();
-    }
+    // Simplified: removed openSimpleExperimentConfigurationDialog method
 
 }
 

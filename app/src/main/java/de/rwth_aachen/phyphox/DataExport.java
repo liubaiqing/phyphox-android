@@ -534,6 +534,22 @@ public class DataExport implements Serializable {
         bottomSheetDialog.show();
     }
 
+    // Add a file to a zip output stream
+    private void addFileToZip(ZipOutputStream zos, File file, String folder) throws Exception {
+        java.io.FileInputStream fis = new java.io.FileInputStream(file);
+        ZipEntry entry = new ZipEntry(folder + file.getName());
+        zos.putNextEntry(entry);
+
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = fis.read(buffer)) > 0) {
+            zos.write(buffer, 0, length);
+        }
+
+        zos.closeEntry();
+        fis.close();
+    }
+
     //This function allows to export the data without dialogs. Hence it takes a list of selected
     //   exportSets (as an array of their indices), the selected ExportFormat and the directory to
     //   write to.

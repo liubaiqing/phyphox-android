@@ -1,6 +1,6 @@
 package de.rwth_aachen.phyphox.ExperimentList.handler;
 
-import android.bluetooth.BluetoothDevice;
+// Simplified: removed BluetoothDevice import
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -21,18 +21,12 @@ import de.rwth_aachen.phyphox.PhyphoxFile;
 public class ZipIntentHandler extends AsyncTask<String, Void, String> {
     private Intent intent; //The intent to read from
     private WeakReference<ExperimentListActivity> parent;
-    BluetoothDevice preselectedDevice = null;
+    // Simplified: removed preselectedDevice field
 
     //The constructor takes the intent to copy from and the parent activity to call back when finished.
     public ZipIntentHandler(Intent intent, ExperimentListActivity parent) {
         this.intent = intent;
         this.parent = new WeakReference<ExperimentListActivity>(parent);
-    }
-
-    public ZipIntentHandler(Intent intent, ExperimentListActivity parent, BluetoothDevice preselectedDevice) {
-        this.intent = intent;
-        this.parent = new WeakReference<ExperimentListActivity>(parent);
-        this.preselectedDevice = preselectedDevice;
     }
 
     //Copying is done on a second thread...
@@ -83,6 +77,7 @@ public class ZipIntentHandler extends AsyncTask<String, Void, String> {
     @Override
     //Call the parent callback when we are done.
     protected void onPostExecute(String result) {
-        parent.get().zipReady(result, preselectedDevice);
+        // Simplified: removed preselectedDevice parameter
+        parent.get().zipReady(result);
     }
 }

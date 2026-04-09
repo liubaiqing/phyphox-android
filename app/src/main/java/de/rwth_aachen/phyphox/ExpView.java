@@ -15,7 +15,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.hardware.camera2.CameraCharacteristics;
+
 import android.os.Build;
 import android.text.InputType;
 import android.text.SpannableString;
@@ -65,16 +65,9 @@ import java.util.Locale;
 import java.util.Vector;
 
 import de.rwth_aachen.phyphox.Helper.Helper;
-import de.rwth_aachen.phyphox.camera.CameraPreviewFragment;
-import de.rwth_aachen.phyphox.camera.Scrollable;
-import de.rwth_aachen.phyphox.camera.depth.DepthInput;
-import de.rwth_aachen.phyphox.camera.depth.DepthPreview;
 import de.rwth_aachen.phyphox.Helper.DecimalTextWatcher;
 import de.rwth_aachen.phyphox.Helper.RGB;
-import de.rwth_aachen.phyphox.NetworkConnection.NetworkConnection;
-import de.rwth_aachen.phyphox.NetworkConnection.NetworkService;
-import de.rwth_aachen.phyphox.camera.model.CameraSettingLevel;
-import de.rwth_aachen.phyphox.camera.model.ShowCameraControls;
+// Simplified: removed NetworkConnection imports
 
 // expView implements experiment views, which are collections of displays and graphs that form a
 // specific way to show the results of an element.
@@ -324,7 +317,7 @@ public class ExpView implements Serializable{
         private String unit; //A string to display as unit
         private RGB color;
         private String positiveUnit, negativeUnit;
-        private GpsInput.ValueFormat valueFormat;
+        // Simplified: removed GPS value format support
 
         protected class Mapping {
             Double min = Double.NEGATIVE_INFINITY;
@@ -416,19 +409,9 @@ public class ExpView implements Serializable{
             this.color = c;
         }
 
+        // Simplified: removed GPS format support
         public void setGpsFormat(String gpsFormat) {
-            if(gpsFormat != null){
-                if(gpsFormat.equalsIgnoreCase("degree-minutes")){
-                    this.valueFormat = GpsInput.ValueFormat.DEGREE_MINUTES;
-                } else if(gpsFormat.equalsIgnoreCase("degree-minutes-seconds")){
-                    this.valueFormat = GpsInput.ValueFormat.DEGREE_MINUTES_SECONDS;
-                } else if (gpsFormat.equalsIgnoreCase("ascii")) {
-                    this.valueFormat = GpsInput.ValueFormat.ASCII_;
-                } else {
-                    this.valueFormat = GpsInput.ValueFormat.FLOAT;
-                }
-            }
-
+            // GPS format not supported in simplified version
         }
 
         public void setNegativeUnit(String negativeUnit) {
@@ -456,9 +439,6 @@ public class ExpView implements Serializable{
         @Override
         //This is a single value. So the updateMode is "single"
         protected String getUpdateMode() {
-            if(this.valueFormat == GpsInput.ValueFormat.ASCII_){
-                return "full";
-            }
             return "single";
         }
 
@@ -546,14 +526,8 @@ public class ExpView implements Serializable{
                     }
                     if (vStr.isEmpty()) {
                         double factoredValue = x * this.factor;
-                        if(valueFormat != null){
-                            if(valueFormat == GpsInput.ValueFormat.ASCII_)
-                                vStr = convertDecimalToAscii(experiment.getBuffer(inputs.get(0)).getArray());
-                            else
-                                vStr = formatGeoCoordinate(factoredValue, valueFormat);
-                        } else {
-                            vStr = String.format(this.formatter, factoredValue);
-                        }
+                        // Simplified: removed GPS format handling
+                        vStr = String.format(this.formatter, factoredValue);
 
                         if(positiveUnit != null && (factoredValue >= 0) ){
                             uStr = this.positiveUnit;
@@ -592,39 +566,11 @@ public class ExpView implements Serializable{
          *                     </ul>
          * @return A string representation of the coordinate in the specified format.
          *         The string will be formatted to three decimal places for the decimal parts.
-         * @see GpsInput.ValueFormat
+         * Simplified: removed GPS coordinate formatting
          */
-        private String formatGeoCoordinate(Double coordinate, GpsInput.ValueFormat outputFormat) {
-            int degree = coordinate.intValue();
-            double decimalMinutes = Math.abs((coordinate - degree) * 60);
-            int integralMinutes = (int) decimalMinutes;
-            double decimalSeconds = Math.abs((decimalMinutes - integralMinutes) * 60);
+        // Simplified: removed formatGeoCoordinate method
 
-            switch (outputFormat) {
-                case DEGREE_MINUTES:
-                    return degree  + "° " + String.format(this.formatter, decimalMinutes) + "' ";
-
-                case DEGREE_MINUTES_SECONDS:
-                    return degree + "° " + integralMinutes + "' "  + String.format(this.formatter, decimalSeconds) + "'' ";
-                case FLOAT:
-                default:
-                    return String.format(this.formatter, coordinate) + " " ;
-            }
-        }
-
-        private String convertDecimalToAscii(Double[] decimals) {
-            StringBuilder sb = new StringBuilder();
-            for (Double decimal : decimals) {
-                if(decimal == null){
-                    continue;
-                }
-                int ascii = (int) Math.round(decimal);
-                if(ascii < 126 && ascii > 31){
-                    sb.append((char) ascii);
-                }
-            }
-            return sb.toString();
-        }
+        // Simplified: removed convertDecimalToAscii method
 
         @Override
         //In Javascript we just have to set the content of the value <span> to the value using jquery
@@ -664,39 +610,8 @@ public class ExpView implements Serializable{
                 sb.append("     };");
             }
 
-            sb.append("     var degree = Math.floor(x);");
-            sb.append("     var decibelMinutes = Math.abs((x - degree) * 60);");
-            sb.append("     var integralMinutes = Math.floor(decibelMinutes);");
-            sb.append("     var decibelSeconds = Math.abs(decibelMinutes - integralMinutes) * 60;");
             sb.append("     x =  x*" + factor + ";" );
-
-            if(valueFormat == null){
-                sb.append("     x = x.to"+(scientificNotation ? "Exponential" : "Fixed")+"("+precision+");");
-            } else {
-                if(valueFormat == GpsInput.ValueFormat.DEGREE_MINUTES){
-                    sb.append("         x =  degree + \"° \" + decibelMinutes.to"+(scientificNotation ? "Exponential" : "Fixed")+"("+precision+")  +  \"' \"  ;");
-                } else if(valueFormat == GpsInput.ValueFormat.DEGREE_MINUTES_SECONDS){
-                    sb.append("         x = degree + \"° \" + integralMinutes + \"' \" +  decibelSeconds.to"+(scientificNotation ? "Exponential" : "Fixed")+"("+precision+") + \"'' \"  ;");
-                } else if(valueFormat == GpsInput.ValueFormat.ASCII_){
-                    sb.append("         var decimals = data[\""+bufferName+"\"][\"data\"];");
-                    sb.append("         var x_ = \""+"\"  ;");
-                    sb.append("         decimals.forEach(decimal => {");
-                    sb.append("             if (decimal !== null && decimal !== undefined) {");
-                    sb.append("                 const intDecimal = Math.round(decimal);");
-                        sb.append("                 if (intDecimal > 31 && intDecimal < 126) {");
-                    sb.append("                     const asciiCharacter = String.fromCharCode(intDecimal);");
-                    sb.append("                     x_ += asciiCharacter;");
-                    sb.append("                 } else {");
-                    sb.append("                     console.log(`No valid ASCII character for decimal ${intDecimal}.`);");
-                    sb.append("                 }");
-                    sb.append("              }");
-                    sb.append("         x = x_;");
-                    sb.append("         });");
-
-                } else {
-                    sb.append("         x = x.to"+(scientificNotation ? "Exponential" : "Fixed")+"("+precision+");");
-                }
-            }
+            sb.append("     x = x.to"+(scientificNotation ? "Exponential" : "Fixed")+"("+precision+");");
 
             sb.append("     var valueElement = document.getElementById(\"element"+htmlID+"\").getElementsByClassName(\"value\")[0];");
             sb.append("     var valueNumber = valueElement.getElementsByClassName(\"valueNumber\")[0];");
@@ -1157,12 +1072,150 @@ public class ExpView implements Serializable{
         }
     }
 
+    //filamentElement implements a 3D view for device姿态 rendering
+    public class filamentElement extends expViewElement implements Serializable {
+        private FilamentView filamentView;
+        private float scale = 1.0f;
+        private static final float DEFAULT_SCALE = 1.0f;
+        private static final float SCALE_STEP = 0.2f;
+
+        //Constructor takes the same arguments as the expViewElement constructor
+        filamentElement(String label, String valueOutput, Vector<String> inputs, Resources res) {
+            super(label, valueOutput, inputs, res);
+        }
+
+        @Override
+        //This does not display anything. Do not update.
+        protected String getUpdateMode() {
+            return "none";
+        }
+
+        @Override
+        //Append the Android views we need to the linear layout
+        protected void createView(LinearLayout ll, Context c, Resources res, ExpViewFragment parent, PhyphoxExperiment experiment){
+            super.createView(ll, c, res, parent, experiment);
+
+            //Create a container for the 3D view and buttons
+            LinearLayout container = new LinearLayout(c);
+            container.setOrientation(LinearLayout.VERTICAL);
+            LinearLayout.LayoutParams containerParams = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            container.setLayoutParams(containerParams);
+
+            //Create the FilamentView
+            filamentView = new FilamentView(c);
+            LinearLayout.LayoutParams filamentParams = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    600);
+            filamentView.setLayoutParams(filamentParams);
+
+            //Create a linear layout for the buttons
+            LinearLayout buttonLayout = new LinearLayout(c);
+            buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
+            buttonLayout.setGravity(Gravity.END);
+            LinearLayout.LayoutParams buttonLayoutParams = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            buttonLayoutParams.setMargins(0, 16, 0, 0);
+            buttonLayout.setLayoutParams(buttonLayoutParams);
+
+            //Create the buttons
+            MaterialButton zoomOutButton = new MaterialButton(c);
+            zoomOutButton.setText("-");
+            zoomOutButton.setLayoutParams(new LinearLayout.LayoutParams(100, 100));
+            zoomOutButton.setBackgroundColor(res.getColor(R.color.phyphox_white_90));
+            zoomOutButton.setTextColor(res.getColor(R.color.phyphox_black_100));
+            zoomOutButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    scale = Math.max(0.2f, scale - SCALE_STEP);
+                    if (filamentView != null) {
+                        filamentView.setScale(scale);
+                    }
+                }
+            });
+
+            MaterialButton resetButton = new MaterialButton(c);
+            resetButton.setText("复位");
+            resetButton.setLayoutParams(new LinearLayout.LayoutParams(100, 100));
+            resetButton.setBackgroundColor(res.getColor(R.color.phyphox_white_90));
+            resetButton.setTextColor(res.getColor(R.color.phyphox_black_100));
+            resetButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    scale = DEFAULT_SCALE;
+                    if (filamentView != null) {
+                        filamentView.setScale(scale);
+                    }
+                }
+            });
+
+            MaterialButton zoomInButton = new MaterialButton(c);
+            zoomInButton.setText("+");
+            zoomInButton.setLayoutParams(new LinearLayout.LayoutParams(100, 100));
+            zoomInButton.setBackgroundColor(res.getColor(R.color.phyphox_white_90));
+            zoomInButton.setTextColor(res.getColor(R.color.phyphox_black_100));
+            zoomInButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    scale += SCALE_STEP;
+                    if (filamentView != null) {
+                        filamentView.setScale(scale);
+                    }
+                }
+            });
+
+            //Add buttons to the button layout
+            buttonLayout.addView(zoomOutButton);
+            buttonLayout.addView(resetButton);
+            buttonLayout.addView(zoomInButton);
+
+            //Add everything to the container
+            container.addView(filamentView);
+            container.addView(buttonLayout);
+
+            rootView = container;
+            rootView.setFocusableInTouchMode(true);
+
+            //Add it to the linear layout
+            ll.addView(rootView);
+        }
+
+        @Override
+        //Creat the HTML version of this view:
+        //<div>
+        //  <p>3D View</p>
+        //</div>
+        protected String createViewHTML(){
+            return "<div style=\"font-size:\"+this.labelSize/.4+\"%;\" class=\"filamentElement\" id=\"element\"+htmlID+\">" +
+                    "<p>3D姿态渲染</p>" +
+                    "</div>";
+        }
+
+        @Override
+        protected void destroyView() {
+            if (filamentView != null) {
+                filamentView.release();
+                filamentView = null;
+            }
+        }
+
+        // Update the rotation matrix for the 3D model
+        public void updateRotation(float[] rotationMatrix) {
+            if (filamentView != null) {
+                filamentView.updateRotation(rotationMatrix);
+                filamentView.render();
+            }
+        }
+    }
+
     //buttonElement implements a simple button which writes values from inputs to outputs when triggered
-    public class buttonElement extends expViewElement implements Serializable, NetworkService.RequestCallback {
+    public class buttonElement extends expViewElement implements Serializable {
         private Vector<DataInput> inputs = null;
         private Vector<DataOutput> outputs = null;
         private Vector<String> triggers = null;
-        private List<NetworkConnection> networkConnections = null;
+        // Simplified: removed networkConnections
         private boolean triggered = false;
         private ExpViewFragment parent;
         private DataBuffer buffer;
@@ -1218,7 +1271,7 @@ public class ExpView implements Serializable{
 
             this.parent =parent;
 
-            networkConnections = experiment.networkConnections;
+            // Simplified: removed networkConnections assignment
 
             b = new MaterialButton(c);
 
@@ -1253,30 +1306,10 @@ public class ExpView implements Serializable{
         @Override
         protected void trigger() {
             triggered = true;
-            for (String t : triggers) {
-                for (NetworkConnection nc : networkConnections) {
-                    if (nc.id.equals(t)) {
-                        List<NetworkService.RequestCallback> requestCallbacks = new ArrayList<>();
-                        requestCallbacks.add(this);
-                        nc.execute(requestCallbacks);
-                        ((MaterialButton)rootView).setEnabled(false);
-                        ((MaterialButton)rootView).setAlpha(0.5f);
-                    }
-                }
-            }
+            // Simplified: removed network connection trigger handling
         }
 
-        public void requestFinished(NetworkService.ServiceResult result) {
-            if (parent == null)
-                return;
-            parent.getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    ((MaterialButton)rootView).setEnabled(true);
-                    ((MaterialButton)rootView).setAlpha(1f);
-                }
-            });
-        }
+        // Simplified: removed requestFinished callback
 
         @Override
         //If triggered, write the data to the output buffers
@@ -2266,309 +2299,6 @@ public class ExpView implements Serializable{
         }
     }
 
-    //depthGUI implements a camera preview and interface to customize the data acquisition of the
-    // depth sensor (LiDAR/ToF)
-    public class depthGuiElement extends expViewElement implements Serializable {
-        private final depthGuiElement self;
-        transient private ExpViewFragment parent = null;
-        transient private DepthPreview cv = null;
-        transient ImageView collapseImage = null;
-        transient ImageView expandImage = null;
-        transient Spinner modeControl = null;
-        transient Spinner cameraSelection = null;
-        TextInputLayout textInputCameraSelection;
-
-        private double aspectRatio;
-
-        private boolean isExclusive = false;
-        private int margin, elMargin;
-        final String warningText;
-
-        //Quite usual constructor...
-        depthGuiElement(String label, String valueOutput, Vector<String> inputs, Resources res) {
-            super(label, valueOutput, inputs, res);
-            this.self = this;
-
-            margin = res.getDimensionPixelSize(R.dimen.graph_label_start_margin);
-            elMargin = res.getDimensionPixelSize(R.dimen.expElementMargin);
-
-            aspectRatio = 2.5;
-
-            warningText = res.getString(R.string.remoteDepthGUIWarning).replace("'", "\\'");
-        }
-
-        //Interface to change the height of the graph
-        protected void setAspectRatio(double aspectRatio) {
-            this.aspectRatio = aspectRatio;
-        }
-
-        @Override
-        protected String getUpdateMode() {
-             return "none";
-        }
-
-        @Override
-        //Create the actual view in Android
-        protected void createView(LinearLayout ll, Context c, Resources res, final ExpViewFragment parent, PhyphoxExperiment experiment){
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
-                return;
-
-            super.createView(ll, c, res, parent, experiment);
-            this.parent = parent;
-
-            Context ctx = c;
-            Activity act = null;
-            while (ctx instanceof ContextWrapper) {
-                if (ctx instanceof Activity) {
-                    act = (Activity) ctx;
-                }
-                ctx = ((ContextWrapper)ctx).getBaseContext();
-            }
-
-            //Create a row consisting of label and value
-            LinearLayout layout = new LinearLayout(c);
-            layout.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT));
-            layout.setOrientation(LinearLayout.VERTICAL);
-            layout.setGravity(Gravity.CENTER_HORIZONTAL);
-
-            RelativeLayout titleLine = new RelativeLayout(c);
-            titleLine.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT));
-            layout.addView(titleLine);
-
-            expandImage = new ImageView(c);
-            expandImage.setId(ViewCompat.generateViewId());
-            expandImage.setImageResource(R.drawable.ic_expand_arrow);
-            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            lp.setMargins(elMargin, elMargin, elMargin, elMargin);
-            lp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-            lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-            expandImage.setLayoutParams(lp);
-            titleLine.addView(expandImage);
-
-            collapseImage = new ImageView(c);
-            collapseImage.setImageResource(R.drawable.ic_collapse_arrow);
-            collapseImage.setLayoutParams(lp);
-            collapseImage.setVisibility(INVISIBLE);
-            titleLine.addView(collapseImage);
-
-            //Create the label as textView
-            TextView labelView = new TextView(c);
-            lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            lp.setMargins(margin, 0, 0, 0);
-            lp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-            lp.addRule(RelativeLayout.RIGHT_OF, expandImage.getId());
-            labelView.setLayoutParams(lp);
-            labelView.setText(this.label);
-            labelView.setTextSize(TypedValue.COMPLEX_UNIT_PX, labelSize);
-            titleLine.addView(labelView);
-
-            //Create the preview view
-            cv = new DepthPreview(c);
-            cv.attachDepthInput(experiment.depthInput);
-            cv.setLayoutParams(new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f));
-            cv.setAspectRatio(aspectRatio);
-            layout.addView(cv);
-
-            //Mode Controls
-            modeControl = new Spinner(c, Spinner.MODE_DIALOG);
-            modeControl.setLayoutParams(new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-            ));
-            modeControl.setVisibility(View.GONE);
-            class ModeItem {
-                public final DepthInput.DepthExtractionMode key;
-                public final String value;
-                ModeItem(DepthInput.DepthExtractionMode key, String value) {
-                    this.key = key;
-                    this.value = value;
-                }
-                @Override
-                public String toString() {
-                    return value;
-                }
-            }
-            ArrayList<ModeItem> modeOptions = new ArrayList<>();
-            int selection = 0;
-            for (DepthInput.DepthExtractionMode mode : DepthInput.DepthExtractionMode.values()) {
-                int id = parent.getResources().getIdentifier("depthAggregationMode" + mode.name().substring(0, 1).toUpperCase() + mode.name().substring(1), "string", act.getPackageName());
-                modeOptions.add(new ModeItem(mode, res.getString(id)));
-            }
-            modeControl.setAdapter(new ArrayAdapter<>(c, android.R.layout.simple_spinner_dropdown_item, modeOptions));
-            for (int i = 0; i < modeOptions.size(); i++) {
-                if (modeOptions.get(i).key == experiment.depthInput.getExtractionMode())
-                    modeControl.setSelection(i);
-            }
-            modeControl.setPromptId(R.string.depthAggregationMode);
-            layout.addView(modeControl);
-            modeControl.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                    cv.setExtractionMode(modeOptions.get(position).key);
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parentView) {
-                }
-            });
-
-            textInputCameraSelection = new TextInputLayout(
-                    new ContextThemeWrapper(c, com.google.android.material.R.style.Widget_Material3_TextInputLayout_FilledBox_ExposedDropdownMenu)
-            );
-
-            textInputCameraSelection.setLayoutParams(new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT));
-
-            textInputCameraSelection.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
-
-            MaterialAutoCompleteTextView autoCompleteTvCameraSelection = new MaterialAutoCompleteTextView(c);
-            autoCompleteTvCameraSelection.setLayoutParams(new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-            ));
-            autoCompleteTvCameraSelection.setInputType(InputType.TYPE_NULL);
-            autoCompleteTvCameraSelection.setGravity(Gravity.CENTER);
-
-            textInputCameraSelection.addView(autoCompleteTvCameraSelection);
-            layout.addView(textInputCameraSelection);
-
-            textInputCameraSelection.setVisibility(View.GONE);
-            class CameraItem {
-                public final String key, value;
-                CameraItem(String key, String value) {
-                    this.key = key;
-                    this.value = value;
-                }
-                @Override
-                public String toString() {
-                    return value;
-                }
-            }
-            ArrayList<CameraItem> camOptions = new ArrayList<>();
-            String backCam = DepthInput.findCamera(CameraCharacteristics.LENS_FACING_BACK);
-            if (backCam != null)
-                camOptions.add(new CameraItem(backCam, res.getString(R.string.cameraBackFacing)));
-            String frontCam = DepthInput.findCamera(CameraCharacteristics.LENS_FACING_FRONT);
-            if (frontCam != null)
-                camOptions.add(new CameraItem(frontCam, res.getString(R.string.cameraFrontFacing)));
-            String extCam = DepthInput.findCamera(CameraCharacteristics.LENS_FACING_EXTERNAL);
-            if (extCam != null)
-                camOptions.add(new CameraItem(extCam, res.getString(R.string.cameraExternal)));
-
-            String[] options = new String[camOptions.size()];
-            for (int i = 0; i < camOptions.size(); i++) {
-                options[i] = camOptions.get(i).value;
-            }
-
-            autoCompleteTvCameraSelection.setSimpleItems(options);
-
-            for (int i = 0; i < camOptions.size(); i++) {
-                if (camOptions.get(i).key.equals(experiment.depthInput.getCurrentCameraId()))
-                   autoCompleteTvCameraSelection.setSelection(i);
-            }
-
-            autoCompleteTvCameraSelection.setDropDownBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(c, Helper.isDarkTheme(res) ?
-                    R.color.phyphox_black_50 :
-                    R.color.phyphox_white_100)));
-
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                autoCompleteTvCameraSelection.setText(options[0], false);
-            } else {
-                autoCompleteTvCameraSelection.setText(options[0]);
-            }
-
-            autoCompleteTvCameraSelection.setOnItemClickListener((adapterView, view, i, l) -> cv.setCamera(camOptions.get(i).key));
-
-            layout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (self.parent != null) {
-                        if (isExclusive) {
-                            self.parent.leaveExclusive();
-                        } else {
-                            cv.requestFocus();
-                            self.parent.requestExclusive(self);
-                        }
-                    }
-                }
-            });
-
-            rootView = layout;
-            rootView.setFocusableInTouchMode(false);
-            ll.addView(rootView);
-
-        }
-
-        @Override
-        public void onFragmentStop(PhyphoxExperiment experiment) {
-            super.onFragmentStop(experiment);
-            cv.stop();
-            cv = null;
-        }
-
-        @Override
-        //Create the HTML markup. We do not stream the video to the web interface, so this is just a placeholder and notification
-        protected String createViewHTML(){
-            return "<div style=\"font-size: 105%;\" class=\"graphElement\" id=\"" + htmlID + "\"><span class=\"label\" onclick=\"toggleExclusive("+htmlID+");\">"+this.label+"</span><div class=\"warningIcon\" onclick=\"alert('"+ warningText + "')\"></div></div>";
-        }
-
-        @Override
-        protected void restore() {
-            super.restore();
-            if (rootView != null && cv != null && parent != null) {
-                isExclusive = false;
-
-                if (expandImage != null && collapseImage != null) {
-                    expandImage.setVisibility(VISIBLE);
-                    collapseImage.setVisibility(INVISIBLE);
-                }
-                if (modeControl != null)
-                    modeControl.setVisibility(View.GONE);
-                if (cameraSelection != null)
-                    cameraSelection.setVisibility(View.GONE);
-                if(textInputCameraSelection != null)
-                    textInputCameraSelection.setVisibility(View.GONE);
-
-                rootView.getLayoutParams().height = LinearLayout.LayoutParams.WRAP_CONTENT;
-                rootView.requestLayout();
-
-                cv.setInteractive(false);
-            }
-        }
-
-        @Override
-        protected void maximize() {
-            super.maximize();
-            if (rootView != null && cv != null && parent != null) {
-                isExclusive = true;
-
-                if (expandImage != null && collapseImage != null) {
-                    expandImage.setVisibility(INVISIBLE);
-                    collapseImage.setVisibility(VISIBLE);
-                }
-                if (modeControl != null)
-                    modeControl.setVisibility(VISIBLE);
-                if (cameraSelection != null)
-                    cameraSelection.setVisibility(VISIBLE);
-                if(textInputCameraSelection != null)
-                    textInputCameraSelection.setVisibility(VISIBLE);
-
-                rootView.getLayoutParams().height = LinearLayout.LayoutParams.MATCH_PARENT;
-                rootView.requestLayout();
-
-                cv.setInteractive(true);
-            }
-        }
-    }
-
     enum ImageFilter {
         none, invert
     }
@@ -2693,164 +2423,6 @@ public class ExpView implements Serializable{
             return "<div class=\"imageElement\" id=\"element" + htmlID + "\"><img style=\"width: " + (100.0*scale) + "% \" class=\"lightFilter_" + lightFilter.toString() + " darkFilter_" + darkFilter.toString() + "\" src=\"res?src=" + src + "\"></p></div>";
         }
 
-    }
-
-    public class cameraElement extends expViewElement implements  Serializable {
-
-        private cameraElement self;
-        private boolean isExclusive = false;
-        transient private ExpViewFragment parent = null;
-        transient private CameraPreviewFragment cameraPreviewFragment = null;
-        float height = 300; //dp, might be settable in the future
-
-        boolean grayscale;
-        RGB markOverexposure;
-        RGB markUnderexposure;
-        ShowCameraControls showCameraControls = ShowCameraControls.FullViewOnly;
-        CameraSettingLevel cameraSettingLevel = CameraSettingLevel.ADVANCED;
-        String lockedSettings;
-
-        final String warningText;
-
-        Scrollable scrollable = new Scrollable() {
-            @Override
-            public void enableScrollable() {
-                parent.enableScrolling();
-                rootView.getParent().requestDisallowInterceptTouchEvent(false);
-            }
-
-            @Override
-            public void disableScrollable() {
-                parent.disableScrolling();
-                rootView.getParent().requestDisallowInterceptTouchEvent(true);
-            }
-        };
-
-
-        protected cameraElement(String label, String valueOutput, Vector<String> inputs, Resources res) {
-            super(label, valueOutput, inputs, res);
-            warningText = res.getString(R.string.remoteCameraPreviewWarning).replace("'", "\\'");
-        }
-
-        public void applyControlSettings(ShowCameraControls showCameraControls, int exposureAdjustmentLevel) {
-            this.showCameraControls = showCameraControls;
-            this.lockedSettings = lockedSettings;
-            switch (exposureAdjustmentLevel) {
-                case 1: cameraSettingLevel = CameraSettingLevel.BASIC;
-                        break;
-                case 2: cameraSettingLevel = CameraSettingLevel.INTERMEDIATE;
-                        break;
-                default: cameraSettingLevel = CameraSettingLevel.ADVANCED;
-                        break;
-            }
-        }
-
-        public void setPreviewParameters(boolean grayscale, RGB markOverexposure, RGB markUnderexposure) {
-            this.grayscale = grayscale;
-            this.markOverexposure = markOverexposure;
-            this.markUnderexposure = markUnderexposure;
-        }
-
-        protected boolean toggleExclusive() {
-            if (self.parent != null) {
-                if (isExclusive) {
-                    self.parent.leaveExclusive();
-                } else {
-                    self.parent.requestExclusive(self);
-                }
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        protected void createView(LinearLayout ll, Context c, Resources res, ExpViewFragment parent, PhyphoxExperiment experiment) {
-            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
-               return;
-
-            super.createView(ll, c, res, parent, experiment);
-            this.parent = parent;
-            this.self = this;
-
-            LayoutInflater inflater = LayoutInflater.from(c);
-            rootView = inflater.inflate(R.layout.camera_layout, ll, false);
-            rootView.getLayoutParams().height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height, parent.getResources().getDisplayMetrics());
-            ll.addView(rootView);
-
-            rootView.setOnClickListener(view -> toggleExclusive());
-            rootView.setFocusableInTouchMode(false);
-
-            FragmentContainerView containerView = rootView.findViewById(R.id.fragmentContainerView);
-            if (cameraPreviewFragment == null)
-                cameraPreviewFragment = new CameraPreviewFragment(experiment, scrollable, this::toggleExclusive, showCameraControls, cameraSettingLevel, grayscale, markOverexposure, markUnderexposure);
-
-            parent.getChildFragmentManager().beginTransaction().add(containerView.getId(), cameraPreviewFragment).commit();
-        }
-
-        @Override
-        protected void destroyView() {
-            if (parent != null && cameraPreviewFragment != null)
-                parent.getChildFragmentManager().beginTransaction().remove(cameraPreviewFragment).commit();
-            cameraPreviewFragment = null;
-
-        }
-
-        @Override
-        //Create the HTML markup. We do not stream the video to the web interface, so this is just a placeholder and notification
-        protected String createViewHTML(){
-            return "<div style=\"font-size: 105%;\" class=\"graphElement\" id=\"" + htmlID + "\"><span class=\"label\" onclick=\"toggleExclusive("+htmlID+");\">"+this.label+"</span><div class=\"warningIcon\" onclick=\"alert('"+ warningText + "')\"></div></div>";
-        }
-
-        @Override
-        protected String getUpdateMode() {
-            return "none";
-        }
-
-        @Override
-        protected void onFragmentStop(PhyphoxExperiment experiment) {
-            super.onFragmentStop(experiment);
-
-        }
-
-        @Override
-        protected void restore() {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-                return;
-
-            super.restore();
-            if (rootView != null && cameraPreviewFragment != null && parent != null) {
-                isExclusive = false;
-
-                rootView.getLayoutParams().height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height, parent.getResources().getDisplayMetrics());
-                rootView.requestLayout();
-
-                cameraPreviewFragment.setInteractive(false);
-            }
-        }
-
-        @Override
-        protected void maximize() {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-                return;
-
-            super.maximize();
-            if (rootView != null && cameraPreviewFragment != null && parent != null) {
-                isExclusive = true;
-
-                rootView.getLayoutParams().height = LinearLayout.LayoutParams.MATCH_PARENT;
-                rootView.requestLayout();
-
-                cameraPreviewFragment.setInteractive(true);
-            }
-        }
-
-        @Override
-        protected void onViewSelected(boolean parentViewIsVisible) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-                return;
-            if (cameraPreviewFragment != null)
-                cameraPreviewFragment.onPageVisibleToUser(parentViewIsVisible);
-        }
     }
 
     public class toggleElement extends  expViewElement implements  Serializable {
